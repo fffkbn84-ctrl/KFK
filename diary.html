@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fuuka.log — 日記</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&family=Cormorant+Garamond:ital,wght@1,500&display=swap');
+
+  :root {
+    --bg-1: #fff4d6;
+    --bg-2: #ffd6e7;
+    --bg-3: #c8e7ff;
+    --ink: #3d2e2a;
+    --ink-soft: #8a6f6a;
+    --accent: #ff7a9e;
+    --accent-2: #ffb84d;
+    --success: #7fc99e;
+    --danger: #ff6b6b;
+    --card: #fffaf0;
+    --shadow: 0 4px 0 rgba(61, 46, 42, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 1px, transparent 2px),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.3) 1px, transparent 2px),
+      radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.4) 1px, transparent 2px);
+    background-size: 100px 100px, 150px 150px, 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 16px 100px;
+  }
+
+  /* ===== ヘッダー ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0 18px;
+  }
+  .back-link {
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .topbar-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .topbar-title .dot { color: var(--accent); }
+  .topbar-spacer { width: 56px; }
+
+  /* ===== タブ ===== */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 4px;
+    border-radius: 16px;
+    border: 2px solid var(--ink);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .tab.active { background: var(--ink); color: white; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ===== 連続記録 & ストリーク ===== */
+  .streak-card {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .streak-num {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    font-family: 'DotGothic16', monospace;
+  }
+  .streak-body { flex: 1; }
+  .streak-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+  }
+  .streak-msg {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+  .streak-msg.gentle { color: var(--success); }
+  .streak-dots {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .streak-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.08);
+    border: 1.5px solid var(--ink);
+  }
+  .streak-dot.written {
+    background: var(--accent);
+  }
+  .streak-dot.today {
+    box-shadow: 0 0 0 2px var(--accent-2);
+  }
+
+  /* ===== 日付ヘッダー ===== */
+  .date-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+  .date-nav {
+    background: rgba(255, 255, 255, 0.7);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 700;
+  }
+  .date-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+  .date-text {
+    flex: 1;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .date-text .day-jp {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-left: 4px;
+  }
+  .date-text.today {
+    color: var(--accent);
+  }
+
+  /* ===== 気分スタンプ ===== */
+  .mood-row {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .mood-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+  .mood-options {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .mood-btn {
+    flex: 1;
+    aspect-ratio: 1;
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    font-size: 22px;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-family: inherit;
+  }
+  .mood-btn:hover { transform: scale(1.05); }
+  .mood-btn.selected {
+    background: var(--bg-2);
+    box-shadow: 0 0 0 3px var(--accent);
+  }
+  .mood-btn .mood-text {
+    font-size: 9px;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+
+  /* ===== 3 Good Things ===== */
+  .three-good {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .section-head {
+    margin-bottom: 12px;
+  }
+  .section-head h2 {
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 3px;
+  }
+  .section-head .sub {
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .good-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .good-item:last-child { margin-bottom: 0; }
+  .good-num {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--bg-1);
+    border: 2px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 13px;
+    color: var(--ink);
+    margin-top: 4px;
+  }
+  .good-input {
+    flex: 1;
+    min-height: 44px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .good-input::placeholder {
+    color: var(--ink-soft);
+    opacity: 0.6;
+    font-size: 13px;
+  }
+
+  /* ===== 自由欄 ===== */
+  .free-note {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .free-note textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .free-note textarea::placeholder {
+    color: var(--ink-soft);
+    opacity: 0.5;
+    font-size: 13px;
+  }
+
+  /* 保存状態 */
+  .save-indicator {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin: 8px 0;
+    min-height: 16px;
+    transition: opacity 0.3s;
+  }
+  .save-indicator.saved { color: var(--success); font-weight: 700; }
+
+  /* ===== 振り返り（過去の今日） ===== */
+  .flashback {
+    background: linear-gradient(135deg, rgba(255, 184, 77, 0.15), rgba(255, 122, 158, 0.15));
+    border: 2px dashed var(--ink);
+    border-radius: 20px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .flashback-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .flashback-item {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--ink-soft);
+  }
+  .flashback-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .flashback-date {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .flashback-content {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .flashback-content .item {
+    margin-bottom: 2px;
+  }
+
+  /* ===== 履歴一覧 ===== */
+  .history-list {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+  }
+  .history-month-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    padding: 0 4px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+  }
+  .history-entry {
+    display: block;
+    padding: 12px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    background: white;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.1s;
+  }
+  .history-entry:active { transform: translateY(2px); }
+  .history-entry-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+  .history-entry-date {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .history-entry-mood {
+    font-size: 18px;
+  }
+  .history-entry-preview {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .history-empty {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  /* ===== 統計 ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-box {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-box .num {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-box .lbl {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .stat-box.amber .num { color: var(--accent-2); }
+
+  /* ===== ヒント・モチベーション ===== */
+  .hint {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1.5px dashed var(--ink-soft);
+    border-radius: 14px;
+    padding: 10px 12px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .hint b { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <a class="back-link" href="index.html">← 戻る</a>
+    <div class="topbar-title">fuuka<span class="dot">.</span>diary</div>
+    <div class="topbar-spacer"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="write">今日書く</button>
+    <button class="tab" data-tab="history">ふりかえり</button>
+    <button class="tab" data-tab="stats">記録</button>
+  </div>
+
+  <!-- 今日書く -->
+  <div class="panel active" id="panel-write">
+
+    <div class="streak-card">
+      <div class="streak-num" id="streakNum">0</div>
+      <div class="streak-body">
+        <div class="streak-label">日記ストリーク</div>
+        <div class="streak-msg" id="streakMsg">最初の一歩を踏み出そう ✨</div>
+        <div class="streak-dots" id="streakDots"></div>
+      </div>
+    </div>
+
+    <div class="date-header">
+      <button class="date-nav" id="prevDay">◀</button>
+      <div class="date-text" id="dateText">--</div>
+      <button class="date-nav" id="nextDay">▶</button>
+    </div>
+
+    <div class="mood-row">
+      <div class="mood-label">😊 今日の気分</div>
+      <div class="mood-options">
+        <button class="mood-btn" data-mood="great">🌟<span class="mood-text">最高</span></button>
+        <button class="mood-btn" data-mood="good">😊<span class="mood-text">いい</span></button>
+        <button class="mood-btn" data-mood="ok">😐<span class="mood-text">ふつう</span></button>
+        <button class="mood-btn" data-mood="meh">😔<span class="mood-text">疲れた</span></button>
+        <button class="mood-btn" data-mood="bad">😢<span class="mood-text">つらい</span></button>
+      </div>
+    </div>
+
+    <div class="three-good">
+      <div class="section-head">
+        <h2>✨ 今日よかったこと3つ</h2>
+        <div class="sub">小さなことでOK。1つだけでも、空欄でも大丈夫。</div>
+      </div>
+      <div class="good-item">
+        <div class="good-num">1</div>
+        <textarea class="good-input" id="good1" placeholder="例: 朝コーヒーが美味しかった" rows="2" maxlength="500"></textarea>
+      </div>
+      <div class="good-item">
+        <div class="good-num">2</div>
+        <textarea class="good-input" id="good2" placeholder="例: 犬の散歩で空がきれいだった" rows="2" maxlength="500"></textarea>
+      </div>
+      <div class="good-item">
+        <div class="good-num">3</div>
+        <textarea class="good-input" id="good3" placeholder="例: 仕事で◯◯さんに褒められた" rows="2" maxlength="500"></textarea>
+      </div>
+    </div>
+
+    <div class="free-note">
+      <div class="section-head">
+        <h2>📝 自由メモ（書きたい日だけ）</h2>
+        <div class="sub">思ったこと、メモしておきたいこと、なんでも。</div>
+      </div>
+      <textarea id="freeNote" placeholder="今日の出来事、考えたこと..." maxlength="3000"></textarea>
+    </div>
+
+    <div class="save-indicator" id="saveIndicator">自動保存されます</div>
+
+    <div class="hint">
+      💡 <b>続けるコツ</b>：完璧を目指さない。1日休んでもストリークはリセットされないよ。書けない日は気分スタンプだけでもOK。
+    </div>
+
+  </div>
+
+  <!-- ふりかえり -->
+  <div class="panel" id="panel-history">
+
+    <div id="flashbackContainer"></div>
+
+    <div class="section-head" style="padding: 0 4px;">
+      <h2 style="font-size:15px;">📖 これまでの記録</h2>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="history-empty">まだ記録がないよ</div>
+    </div>
+
+  </div>
+
+  <!-- 記録（統計） -->
+  <div class="panel" id="panel-stats">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="num" id="totalDays">0</div>
+        <div class="lbl">書いた日数</div>
+      </div>
+      <div class="stat-box amber">
+        <div class="num" id="longestStreak">0</div>
+        <div class="lbl">最長ストリーク</div>
+      </div>
+      <div class="stat-box">
+        <div class="num" id="totalGood">0</div>
+        <div class="lbl">記録した「よかった」</div>
+      </div>
+      <div class="stat-box amber">
+        <div class="num" id="thisMonthDays">0</div>
+        <div class="lbl">今月の日数</div>
+      </div>
+    </div>
+
+    <div class="three-good">
+      <div class="section-head">
+        <h2>😊 気分の分布</h2>
+        <div class="sub">これまでの気分スタンプを集計</div>
+      </div>
+      <div id="moodChart"></div>
+    </div>
+
+    <div class="hint">
+      💡 続けるほど自分のパターンが見えてくるよ。「最近気分が落ちてるな」「今月は『よかったこと』をたくさん書けてる」みたいな気づきは、続けた人にしか見えない景色。
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===== データ管理 =====
+const DIARY_KEY = 'fuukalog_diary_v1';
+const DAYS_JP = ['日', '月', '火', '水', '木', '金', '土'];
+
+// データ形式: { "2026-05-16": { mood: "good", good1: "...", good2: "...", good3: "...", free: "...", updatedAt: ... } }
+function loadDiary() {
+  try {
+    const s = localStorage.getItem(DIARY_KEY);
+    return s ? JSON.parse(s) : {};
+  } catch (e) { return {}; }
+}
+function saveDiary() {
+  localStorage.setItem(DIARY_KEY, JSON.stringify(diary));
+}
+
+let diary = loadDiary();
+let currentDate = new Date();
+currentDate.setHours(0, 0, 0, 0);
+
+function dateKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function todayKey() {
+  return dateKey(new Date());
+}
+function parseKey(k) {
+  const [y, m, d] = k.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+
+// エントリにコンテンツが入ってるか判定
+function hasContent(entry) {
+  if (!entry) return false;
+  return !!(entry.mood || (entry.good1 && entry.good1.trim()) ||
+            (entry.good2 && entry.good2.trim()) ||
+            (entry.good3 && entry.good3.trim()) ||
+            (entry.free && entry.free.trim()));
+}
+
+// ===== ストリーク計算 =====
+// ルール: 「今日」と「昨日」のどちらかが書かれていたら、そこから連続を遡る
+// 1日休んでもリセットしない（緩い設計）→ 2日連続で空いたらリセット
+function calcStreak() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  let streak = 0;
+  let cursor = new Date(today);
+  let skipsAllowed = 1; // 1日の抜けは許す
+
+  // 今日が書かれてなければ昨日からスタート
+  if (!hasContent(diary[dateKey(cursor)])) {
+    cursor.setDate(cursor.getDate() - 1);
+    if (!hasContent(diary[dateKey(cursor)])) {
+      // 今日も昨日も書いてない
+      return 0;
+    }
+  }
+
+  while (true) {
+    if (hasContent(diary[dateKey(cursor)])) {
+      streak++;
+      skipsAllowed = 1; // 書いた日が来たらスキップ枠リセット
+    } else {
+      if (skipsAllowed > 0) {
+        skipsAllowed--;
+      } else {
+        break;
+      }
+    }
+    cursor.setDate(cursor.getDate() - 1);
+    if (streak > 9999) break; // 安全弁
+  }
+
+  return streak;
+}
+
+function calcLongestStreak() {
+  const keys = Object.keys(diary).filter(k => hasContent(diary[k])).sort();
+  if (keys.length === 0) return 0;
+  let longest = 1;
+  let current = 1;
+  for (let i = 1; i < keys.length; i++) {
+    const prev = parseKey(keys[i-1]);
+    const curr = parseKey(keys[i]);
+    const diff = Math.round((curr - prev) / (1000*60*60*24));
+    if (diff <= 2) {
+      current += diff === 1 ? 1 : 0; // 連続のみカウント
+      if (current > longest) longest = current;
+    } else {
+      current = 1;
+    }
+  }
+  return longest;
+}
+
+// ===== UI: 日付ヘッダー =====
+function renderDateHeader() {
+  const dt = new Date(currentDate);
+  const isToday = dateKey(dt) === todayKey();
+  const dayName = DAYS_JP[dt.getDay()];
+  const el = document.getElementById('dateText');
+  el.innerHTML = `${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日<span class="day-jp">（${dayName}）</span>`;
+  el.className = 'date-text' + (isToday ? ' today' : '');
+
+  // 未来日付には行けない
+  const tomorrow = new Date(currentDate);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  document.getElementById('nextDay').disabled = tomorrow > todayDate;
+}
+
+// ===== UI: 入力フォームに読み込み =====
+function loadEntryToForm() {
+  const key = dateKey(currentDate);
+  const entry = diary[key] || {};
+
+  document.getElementById('good1').value = entry.good1 || '';
+  document.getElementById('good2').value = entry.good2 || '';
+  document.getElementById('good3').value = entry.good3 || '';
+  document.getElementById('freeNote').value = entry.free || '';
+
+  document.querySelectorAll('.mood-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.mood === entry.mood);
+  });
+}
+
+// ===== 保存 =====
+let saveTimer = null;
+function scheduleSave() {
+  if (saveTimer) clearTimeout(saveTimer);
+  document.getElementById('saveIndicator').textContent = '保存中...';
+  document.getElementById('saveIndicator').className = 'save-indicator';
+  saveTimer = setTimeout(doSave, 600);
+}
+
+function doSave() {
+  const key = dateKey(currentDate);
+  const entry = diary[key] || {};
+
+  entry.good1 = document.getElementById('good1').value;
+  entry.good2 = document.getElementById('good2').value;
+  entry.good3 = document.getElementById('good3').value;
+  entry.free = document.getElementById('freeNote').value;
+  entry.updatedAt = Date.now();
+
+  // 空っぽなら削除
+  if (!hasContent(entry)) {
+    delete diary[key];
+  } else {
+    diary[key] = entry;
+  }
+
+  saveDiary();
+  renderStreak();
+
+  const ind = document.getElementById('saveIndicator');
+  ind.textContent = '✓ 保存しました';
+  ind.className = 'save-indicator saved';
+  setTimeout(() => {
+    ind.textContent = '自動保存されます';
+    ind.className = 'save-indicator';
+  }, 1500);
+}
+
+// ===== UI: ストリーク表示 =====
+function renderStreak() {
+  const streak = calcStreak();
+  document.getElementById('streakNum').textContent = streak;
+
+  const msgEl = document.getElementById('streakMsg');
+  if (streak === 0) {
+    msgEl.textContent = '最初の一歩を踏み出そう ✨';
+    msgEl.className = 'streak-msg';
+  } else if (streak === 1) {
+    msgEl.textContent = '1日目スタート 🌱';
+    msgEl.className = 'streak-msg gentle';
+  } else if (streak < 7) {
+    msgEl.textContent = `${streak}日続いてるよ、いい感じ`;
+    msgEl.className = 'streak-msg gentle';
+  } else if (streak < 30) {
+    msgEl.textContent = `${streak}日！習慣になりつつあるね`;
+    msgEl.className = 'streak-msg gentle';
+  } else {
+    msgEl.textContent = `${streak}日連続、すごい 🏆`;
+    msgEl.className = 'streak-msg gentle';
+  }
+
+  // 過去7日の点
+  const dots = document.getElementById('streakDots');
+  dots.innerHTML = '';
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dot = document.createElement('div');
+    dot.className = 'streak-dot';
+    if (hasContent(diary[dateKey(d)])) dot.classList.add('written');
+    if (i === 0) dot.classList.add('today');
+    dots.appendChild(dot);
+  }
+}
+
+// ===== UI: 履歴 =====
+function renderHistory() {
+  // フラッシュバック（先月の今日、3ヶ月前、6ヶ月前、1年前）
+  renderFlashback();
+
+  const list = document.getElementById('historyList');
+  const keys = Object.keys(diary).filter(k => hasContent(diary[k])).sort().reverse();
+
+  if (keys.length === 0) {
+    list.innerHTML = '<div class="history-empty">まだ記録がないよ。今日から始めよう 🌱</div>';
+    return;
+  }
+
+  // 月ごとにグループ化
+  const groups = {};
+  keys.forEach(k => {
+    const month = k.substring(0, 7);
+    if (!groups[month]) groups[month] = [];
+    groups[month].push(k);
+  });
+
+  let html = '';
+  Object.keys(groups).sort().reverse().forEach(month => {
+    const [y, m] = month.split('-');
+    html += `<div class="history-month-title">${+y}年${+m}月</div>`;
+    groups[month].forEach(key => {
+      const entry = diary[key];
+      const dt = parseKey(key);
+      const moodEmoji = { great: '🌟', good: '😊', ok: '😐', meh: '😔', bad: '😢' }[entry.mood] || '';
+      const preview = [entry.good1, entry.good2, entry.good3, entry.free]
+        .filter(s => s && s.trim())
+        .join(' / ') || '（気分のみ）';
+      html += `
+        <div class="history-entry" data-key="${key}">
+          <div class="history-entry-head">
+            <div class="history-entry-date">${dt.getMonth()+1}/${dt.getDate()}（${DAYS_JP[dt.getDay()]}）</div>
+            <div class="history-entry-mood">${moodEmoji}</div>
+          </div>
+          <div class="history-entry-preview"></div>
+        </div>
+      `;
+    });
+  });
+
+  list.innerHTML = html;
+  // プレビューはinnerTextで安全にセット
+  list.querySelectorAll('.history-entry').forEach(el => {
+    const key = el.dataset.key;
+    const entry = diary[key];
+    const preview = [entry.good1, entry.good2, entry.good3, entry.free]
+      .filter(s => s && s.trim())
+      .join(' / ') || '（気分のみ）';
+    el.querySelector('.history-entry-preview').textContent = preview;
+    el.addEventListener('click', () => {
+      currentDate = parseKey(key);
+      document.querySelector('.tab[data-tab="write"]').click();
+      renderDateHeader();
+      loadEntryToForm();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+}
+
+function renderFlashback() {
+  const container = document.getElementById('flashbackContainer');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const candidates = [
+    { offset: 30, label: '1ヶ月前のこの日' },
+    { offset: 90, label: '3ヶ月前のこの日' },
+    { offset: 180, label: '半年前のこの日' },
+    { offset: 365, label: '1年前のこの日' }
+  ];
+
+  const items = [];
+  candidates.forEach(c => {
+    const d = new Date(today);
+    d.setDate(d.getDate() - c.offset);
+    const key = dateKey(d);
+    if (diary[key] && hasContent(diary[key])) {
+      items.push({ ...c, date: d, entry: diary[key] });
+    }
+  });
+
+  if (items.length === 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = `<div class="flashback">
+    <div class="flashback-label">⏳ ふりかえり</div>`;
+  items.forEach(it => {
+    const moodEmoji = { great: '🌟', good: '😊', ok: '😐', meh: '😔', bad: '😢' }[it.entry.mood] || '';
+    const goods = [it.entry.good1, it.entry.good2, it.entry.good3].filter(s => s && s.trim());
+    html += `
+      <div class="flashback-item">
+        <div class="flashback-date">${it.label}（${it.date.getMonth()+1}/${it.date.getDate()}）${moodEmoji}</div>
+        <div class="flashback-content"></div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+
+  // 内容を安全に挿入
+  const itemEls = container.querySelectorAll('.flashback-item');
+  items.forEach((it, i) => {
+    const contentEl = itemEls[i].querySelector('.flashback-content');
+    const goods = [it.entry.good1, it.entry.good2, it.entry.good3].filter(s => s && s.trim());
+    if (goods.length > 0) {
+      goods.forEach(g => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.textContent = '・ ' + g;
+        contentEl.appendChild(div);
+      });
+    } else if (it.entry.free) {
+      const div = document.createElement('div');
+      div.textContent = it.entry.free.length > 100 ? it.entry.free.substring(0, 100) + '...' : it.entry.free;
+      contentEl.appendChild(div);
+    } else {
+      contentEl.textContent = '（気分のみの記録）';
+    }
+  });
+}
+
+// ===== UI: 統計 =====
+function renderStats() {
+  const keys = Object.keys(diary).filter(k => hasContent(diary[k]));
+  document.getElementById('totalDays').textContent = keys.length;
+  document.getElementById('longestStreak').textContent = calcLongestStreak();
+
+  let goodCount = 0;
+  const moodCounts = { great: 0, good: 0, ok: 0, meh: 0, bad: 0 };
+  keys.forEach(k => {
+    const e = diary[k];
+    if (e.good1 && e.good1.trim()) goodCount++;
+    if (e.good2 && e.good2.trim()) goodCount++;
+    if (e.good3 && e.good3.trim()) goodCount++;
+    if (e.mood && moodCounts[e.mood] !== undefined) moodCounts[e.mood]++;
+  });
+  document.getElementById('totalGood').textContent = goodCount;
+
+  // 今月の日数
+  const now = new Date();
+  const monthPrefix = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const thisMonth = keys.filter(k => k.startsWith(monthPrefix)).length;
+  document.getElementById('thisMonthDays').textContent = thisMonth;
+
+  // 気分チャート
+  const chart = document.getElementById('moodChart');
+  const total = Object.values(moodCounts).reduce((a, b) => a + b, 0);
+  if (total === 0) {
+    chart.innerHTML = '<div style="text-align:center;color:var(--ink-soft);font-size:12px;padding:10px;">まだ記録がないよ</div>';
+  } else {
+    const moods = [
+      { key: 'great', emoji: '🌟', label: '最高', color: '#ffb84d' },
+      { key: 'good',  emoji: '😊', label: 'いい',  color: '#7fc99e' },
+      { key: 'ok',    emoji: '😐', label: 'ふつう',color: '#c8c8c8' },
+      { key: 'meh',   emoji: '😔', label: '疲れた',color: '#a89eb8' },
+      { key: 'bad',   emoji: '😢', label: 'つらい',color: '#ff6b6b' }
+    ];
+    let html = '';
+    moods.forEach(m => {
+      const count = moodCounts[m.key];
+      const pct = Math.round(count / total * 100);
+      html += `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div style="font-size:18px;width:24px;">${m.emoji}</div>
+          <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;">
+              <span style="font-weight:700;">${m.label}</span>
+              <span style="color:var(--ink-soft);">${count}日 (${pct}%)</span>
+            </div>
+            <div style="height:10px;background:rgba(0,0,0,0.06);border-radius:6px;overflow:hidden;border:1.5px solid var(--ink);">
+              <div style="height:100%;width:${pct}%;background:${m.color};"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    chart.innerHTML = html;
+  }
+}
+
+// ===== イベント =====
+// テキスト入力で自動保存
+['good1', 'good2', 'good3', 'freeNote'].forEach(id => {
+  document.getElementById(id).addEventListener('input', scheduleSave);
+});
+
+// 気分ボタン
+document.querySelectorAll('.mood-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mood = btn.dataset.mood;
+    const key = dateKey(currentDate);
+    const entry = diary[key] || {};
+    // 同じスタンプを押したら解除
+    if (entry.mood === mood) {
+      delete entry.mood;
+    } else {
+      entry.mood = mood;
+    }
+    entry.updatedAt = Date.now();
+    if (!hasContent(entry)) delete diary[key];
+    else diary[key] = entry;
+    saveDiary();
+    loadEntryToForm();
+    renderStreak();
+  });
+});
+
+// 日付ナビ
+document.getElementById('prevDay').addEventListener('click', () => {
+  currentDate.setDate(currentDate.getDate() - 1);
+  renderDateHeader();
+  loadEntryToForm();
+});
+document.getElementById('nextDay').addEventListener('click', () => {
+  const tomorrow = new Date(currentDate);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  if (tomorrow > todayDate) return;
+  currentDate = tomorrow;
+  renderDateHeader();
+  loadEntryToForm();
+});
+
+// タブ切り替え
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    if (tab.dataset.tab === 'history') renderHistory();
+    else if (tab.dataset.tab === 'stats') renderStats();
+  });
+});
+
+// ===== 初期化 =====
+renderDateHeader();
+loadEntryToForm();
+renderStreak();
+</script>
+</body>
+</html>

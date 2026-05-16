@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fuuka.log — トップ</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&family=Cormorant+Garamond:ital,wght@1,500&display=swap');
+
+  :root {
+    --bg-1: #fff4d6;
+    --bg-2: #ffd6e7;
+    --bg-3: #c8e7ff;
+    --ink: #3d2e2a;
+    --ink-soft: #8a6f6a;
+    --accent: #ff7a9e;
+    --accent-2: #ffb84d;
+    --success: #7fc99e;
+    --danger: #ff6b6b;
+    --warning: #ffaa44;
+    --card: #fffaf0;
+    --shadow: 0 4px 0 rgba(61, 46, 42, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 1px, transparent 2px),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.3) 1px, transparent 2px),
+      radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.4) 1px, transparent 2px);
+    background-size: 100px 100px, 150px 150px, 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px 16px 100px;
+  }
+
+  /* ===== ブランド ===== */
+  .brand {
+    text-align: center;
+    padding: 20px 0 12px;
+  }
+  .brand-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 38px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .brand-name .dot { color: var(--accent); }
+  .brand-tagline {
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.25em;
+    margin-top: 6px;
+  }
+  .brand-date {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .brand-date b {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ===== ニュース（起床ゲーム連携） ===== */
+  .news {
+    display: block;
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.1s;
+  }
+  .news:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(61, 46, 42, 0.15); }
+
+  .news-mochi {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+  }
+  .news-body { flex: 1; min-width: 0; }
+  .news-label {
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.15em;
+    margin-bottom: 2px;
+  }
+  .news-text {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .news-text.success { color: var(--success); }
+  .news-text.danger { color: var(--danger); }
+  .news-text.warn { color: var(--warning); }
+  .news-meta {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 3px;
+  }
+  .news-arrow {
+    font-size: 18px;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+
+  /* ===== セクション見出し ===== */
+  .section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px;
+    margin-bottom: 10px;
+  }
+  .section-title h2 {
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+  }
+  .section-title .count {
+    font-size: 11px;
+    color: var(--ink-soft);
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid var(--ink);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+
+  /* ===== TODO ===== */
+  .todo-card {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+
+  .todo-input-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  /* クイック追加 */
+  .quick-add {
+    background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+  .quick-add-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .quick-add-row {
+    display: flex;
+    gap: 6px;
+  }
+  .quick-add-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+  }
+  .quick-add-hint {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    letter-spacing: 0.03em;
+  }
+  .quick-add-hint.preview {
+    color: var(--success);
+    font-weight: 700;
+  }
+  .quick-add-hint.error {
+    color: var(--danger);
+    font-weight: 700;
+  }
+
+  /* 折りたたみ */
+  details {
+    margin-bottom: 10px;
+  }
+  details summary {
+    cursor: pointer;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    list-style: none;
+    user-select: none;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: ' ▼';
+    font-size: 10px;
+  }
+  details[open] summary::after { content: ' ▲'; }
+  details[open] summary { margin-bottom: 8px; color: var(--ink); }
+
+  details .todo-input-row { margin-bottom: 0; }
+
+  .json-import textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    font-family: 'DotGothic16', monospace;
+    font-size: 12px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+    resize: vertical;
+    margin-bottom: 8px;
+  }
+  .json-import-btn {
+    width: 100%;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 900;
+    background: var(--accent-2);
+    color: white;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--ink);
+  }
+  .json-import-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+  .json-result {
+    margin-top: 8px;
+    font-size: 12px;
+    text-align: center;
+    min-height: 16px;
+  }
+  .json-result.success { color: var(--success); font-weight: 700; }
+  .json-result.error { color: var(--danger); font-weight: 700; }
+  .todo-input-row input[type="text"] {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+  }
+  .todo-input-row input[type="date"] {
+    width: 105px;
+    padding: 10px 6px;
+    font-family: inherit;
+    font-size: 13px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+  }
+  .todo-add-btn {
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
+    background: var(--accent);
+    color: white;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--ink);
+    flex-shrink: 0;
+  }
+  .todo-add-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+
+  .todo-filters {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    background: rgba(255, 244, 214, 0.5);
+    padding: 3px;
+    border-radius: 12px;
+  }
+  .todo-filter {
+    flex: 1;
+    padding: 6px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .todo-filter.active {
+    background: var(--ink);
+    color: white;
+  }
+
+  .todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .todo-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    transition: all 0.15s;
+  }
+  .todo-item.urgent { background: #ffe5e5; border-color: var(--danger); }
+  .todo-item.warn { background: #fff5e0; border-color: var(--warning); }
+  .todo-item.done {
+    background: rgba(127, 201, 158, 0.15);
+    opacity: 0.7;
+  }
+  .todo-item.done .todo-text {
+    text-decoration: line-through;
+    color: var(--ink-soft);
+  }
+  .todo-item.overdue {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: var(--danger);
+  }
+
+  .todo-check {
+    width: 24px;
+    height: 24px;
+    border: 2.5px solid var(--ink);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--success);
+    font-weight: 900;
+    transition: all 0.15s;
+  }
+  .todo-check.checked {
+    background: var(--success);
+    color: white;
+  }
+
+  .todo-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .todo-text {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    word-wrap: break-word;
+  }
+  .todo-due {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .todo-due.urgent { color: var(--danger); font-weight: 700; }
+  .todo-due.warn { color: var(--warning); font-weight: 700; }
+  .todo-due.overdue { color: var(--danger); font-weight: 700; }
+
+  .todo-delete {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--ink-soft);
+    padding: 2px 6px;
+    flex-shrink: 0;
+  }
+  .todo-delete:active { color: var(--danger); }
+
+  .todo-empty {
+    text-align: center;
+    padding: 30px 16px;
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .todo-empty .emoji {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* ===== 機能カードグリッド ===== */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .feature-card {
+    display: block;
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 16px 14px;
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(61, 46, 42, 0.15); }
+
+  .feature-card.coming {
+    background: rgba(255, 255, 255, 0.4);
+    border-style: dashed;
+    border-color: var(--ink-soft);
+    cursor: default;
+  }
+  .feature-card.coming .feature-emoji { opacity: 0.4; }
+  .feature-card.coming .feature-name { color: var(--ink-soft); }
+
+  .feature-emoji {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .feature-name {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 2px;
+  }
+  .feature-desc {
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.05em;
+  }
+  .feature-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 9px;
+    padding: 2px 6px;
+    background: var(--accent);
+    color: white;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .feature-badge.soon {
+    background: var(--ink-soft);
+  }
+
+  /* ===== フッター ===== */
+  .footer {
+    text-align: center;
+    margin-top: 30px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.1em;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ブランド -->
+  <div class="brand">
+    <div class="brand-name">fuuka<span class="dot">.</span>log</div>
+    <div class="brand-tagline">A QUIET RECORD OF DAYS</div>
+    <div class="brand-date" id="brandDate">--</div>
+  </div>
+
+  <!-- もちまるのニュース（起床ゲーム連携） -->
+  <a class="news" href="wakeup-game.html" id="newsCard">
+    <svg class="news-mochi" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="100" cy="180" rx="55" ry="5" fill="rgba(61,46,42,0.15)"/>
+      <ellipse cx="100" cy="115" rx="70" ry="60" fill="#fffaf0" stroke="#3d2e2a" stroke-width="4"/>
+      <ellipse cx="55" cy="125" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
+      <ellipse cx="145" cy="125" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
+      <g id="newsMochiEyes">
+        <circle cx="78" cy="105" r="5" fill="#3d2e2a"/>
+        <circle cx="122" cy="105" r="5" fill="#3d2e2a"/>
+      </g>
+      <path id="newsMochiMouth" d="M 92 130 Q 100 138 108 130" stroke="#3d2e2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="52" r="4" fill="#3d2e2a"/>
+      <path d="M 100 56 L 100 62" stroke="#3d2e2a" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="news-body">
+      <div class="news-label">🌅 もちまるから</div>
+      <div class="news-text" id="newsText">おはよう、ふうかちゃん</div>
+      <div class="news-meta" id="newsMeta">--</div>
+    </div>
+    <div class="news-arrow">›</div>
+  </a>
+
+  <!-- TODO -->
+  <div class="section-title">
+    <h2>📝 TODO</h2>
+    <div class="count" id="todoCount">0件</div>
+  </div>
+
+  <div class="todo-card">
+    <!-- クイック追加（自然文） -->
+    <div class="quick-add">
+      <div class="quick-add-label">✨ さくっと追加</div>
+      <div class="quick-add-row">
+        <input type="text" id="quickInput" placeholder="例: 10時までに犬の散歩、明日 美容院" maxlength="200">
+        <button class="todo-add-btn" id="quickAddBtn">＋</button>
+      </div>
+      <div class="quick-add-hint" id="quickHint">時刻・日付を自動で読み取るよ</div>
+    </div>
+
+    <!-- 詳細追加（折りたたみ） -->
+    <details class="manual-add">
+      <summary>📝 詳細を指定して追加</summary>
+      <div class="todo-input-row">
+        <input type="text" id="todoInput" placeholder="やること..." maxlength="200">
+        <input type="date" id="todoDueInput" title="期限">
+        <button class="todo-add-btn" id="todoAddBtn">＋</button>
+      </div>
+    </details>
+
+    <!-- JSONインポート -->
+    <details class="json-import">
+      <summary>📥 Claudeから貼り付けて一括追加</summary>
+      <textarea id="jsonInput" placeholder='Claudeに「TODOにこれ追加して」って頼んで、出てきたJSONをここに貼って "追加" を押す'></textarea>
+      <button class="json-import-btn" id="jsonImportBtn">JSONから追加</button>
+      <div class="json-result" id="jsonResult"></div>
+    </details>
+
+    <div class="todo-filters">
+      <button class="todo-filter active" data-filter="active">未完了</button>
+      <button class="todo-filter" data-filter="all">すべて</button>
+      <button class="todo-filter" data-filter="done">完了</button>
+    </div>
+
+    <div class="todo-list" id="todoList"></div>
+  </div>
+
+  <!-- 機能カード -->
+  <div class="section-title">
+    <h2>🌟 機能</h2>
+  </div>
+
+  <div class="feature-grid">
+    <a class="feature-card" href="wakeup-game.html">
+      <span class="feature-badge">PLAY</span>
+      <span class="feature-emoji">🌅</span>
+      <div class="feature-name">起床ゲーム</div>
+      <div class="feature-desc">もちまると朝活</div>
+    </a>
+
+    <a class="feature-card" href="diary.html">
+      <span class="feature-badge">WRITE</span>
+      <span class="feature-emoji">📔</span>
+      <div class="feature-name">日記</div>
+      <div class="feature-desc">今日よかったこと3つ</div>
+    </a>
+
+    <div class="feature-card coming">
+      <span class="feature-badge soon">SOON</span>
+      <span class="feature-emoji">📸</span>
+      <div class="feature-name">サーキット写真</div>
+      <div class="feature-desc">準備中</div>
+    </div>
+
+    <div class="feature-card coming">
+      <span class="feature-badge soon">SOON</span>
+      <span class="feature-emoji">📚</span>
+      <div class="feature-name">読書ログ</div>
+      <div class="feature-desc">準備中</div>
+    </div>
+  </div>
+
+  <div class="footer">— fuuka.log —</div>
+
+</div>
+
+<script>
+// ===== TODO データ =====
+const TODO_KEY = 'fuukalog_todos_v1';
+const WAKEUP_KEY = 'mochimaru_wakeup_v2';
+
+function loadTodos() {
+  try {
+    const s = localStorage.getItem(TODO_KEY);
+    return s ? JSON.parse(s) : [];
+  } catch (e) { return []; }
+}
+function saveTodos() { localStorage.setItem(TODO_KEY, JSON.stringify(todos)); }
+
+let todos = loadTodos();
+let currentFilter = 'active';
+
+// ===== 日付ユーティリティ =====
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function daysBetween(dateStr) {
+  if (!dateStr) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(dateStr);
+  due.setHours(0, 0, 0, 0);
+  return Math.round((due - today) / (1000 * 60 * 60 * 24));
+}
+function formatDue(dateStr) {
+  const diff = daysBetween(dateStr);
+  if (diff === null) return '';
+  if (diff < 0) return `${Math.abs(diff)}日超過 😢`;
+  if (diff === 0) return '今日まで！';
+  if (diff === 1) return '明日まで';
+  if (diff <= 3) return `あと${diff}日`;
+  if (diff <= 7) return `${diff}日後`;
+  const [y, m, d] = dateStr.split('-');
+  return `${+m}/${+d}まで`;
+}
+function dueClass(dateStr, done) {
+  if (done || !dateStr) return '';
+  const diff = daysBetween(dateStr);
+  if (diff < 0) return 'overdue';
+  if (diff <= 1) return 'urgent';
+  if (diff <= 3) return 'warn';
+  return '';
+}
+
+// ===== ブランドの日付 =====
+function renderBrandDate() {
+  const d = new Date();
+  const DAYS = ['日', '月', '火', '水', '木', '金', '土'];
+  document.getElementById('brandDate').innerHTML =
+    `<b>${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日</b>（${DAYS[d.getDay()]}）`;
+}
+
+// ===== 起床ゲーム連携：もちまるニュース =====
+function renderNews() {
+  let wakeupState = null;
+  try {
+    const s = localStorage.getItem(WAKEUP_KEY);
+    if (s) wakeupState = JSON.parse(s);
+  } catch (e) {}
+
+  const textEl = document.getElementById('newsText');
+  const metaEl = document.getElementById('newsMeta');
+  const eyesEl = document.getElementById('newsMochiEyes');
+  const mouthEl = document.getElementById('newsMochiMouth');
+
+  if (!wakeupState) {
+    textEl.textContent = 'おはよう、ふうかちゃん';
+    textEl.className = 'news-text';
+    metaEl.textContent = '起床ゲームを始めよう →';
+    return;
+  }
+
+  // 今日のシフトを取得
+  const today = todayKey();
+  const todayShiftId = (wakeupState.calendar || {})[today];
+  const todayShift = todayShiftId ? (wakeupState.shifts || []).find(s => s.id === todayShiftId) : null;
+
+  if (wakeupState.todayCleared) {
+    textEl.textContent = `🎉 ${wakeupState.streak}日連続クリア中！`;
+    textEl.className = 'news-text success';
+    metaEl.textContent = `最高記録: ${wakeupState.best}日 ／ 今日の起床OK`;
+    // にっこり
+    eyesEl.innerHTML = `
+      <path d="M 70 105 Q 78 98 86 105" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M 114 105 Q 122 98 130 105" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    `;
+    mouthEl.setAttribute('d', 'M 88 130 Q 100 142 112 130');
+    mouthEl.setAttribute('fill', '#ff7a9e');
+  } else if (wakeupState.todayFailed) {
+    textEl.textContent = '...今日はアウトだったね';
+    textEl.className = 'news-text danger';
+    metaEl.textContent = `連続記録リセット ／ 明日また頑張ろう`;
+    // しょんぼり
+    eyesEl.innerHTML = `
+      <path d="M 70 108 Q 78 115 86 108" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M 114 108 Q 122 115 130 108" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+    `;
+    mouthEl.setAttribute('d', 'M 92 135 Q 100 128 108 135');
+    mouthEl.setAttribute('fill', 'none');
+  } else if (todayShift) {
+    textEl.textContent = `今日のアラーム ${todayShift.alarmTime}`;
+    textEl.className = 'news-text warn';
+    metaEl.textContent = `${todayShift.name} ／ 期限 ${todayShift.deadline} ／ 連続${wakeupState.streak}日`;
+    // ふつう
+    eyesEl.innerHTML = `
+      <circle cx="78" cy="105" r="5" fill="#3d2e2a"/>
+      <circle cx="122" cy="105" r="5" fill="#3d2e2a"/>
+    `;
+    mouthEl.setAttribute('d', 'M 92 130 Q 100 138 108 130');
+    mouthEl.setAttribute('fill', 'none');
+  } else {
+    textEl.textContent = `おはよう、ふうかちゃん`;
+    textEl.className = 'news-text';
+    metaEl.textContent = `今日はシフト未設定 ／ 連続${wakeupState.streak}日`;
+    eyesEl.innerHTML = `
+      <circle cx="78" cy="105" r="5" fill="#3d2e2a"/>
+      <circle cx="122" cy="105" r="5" fill="#3d2e2a"/>
+    `;
+    mouthEl.setAttribute('d', 'M 92 130 Q 100 138 108 130');
+    mouthEl.setAttribute('fill', 'none');
+  }
+}
+
+// ===== TODO レンダリング =====
+function renderTodos() {
+  const list = document.getElementById('todoList');
+
+  // フィルタ
+  let filtered = todos;
+  if (currentFilter === 'active') filtered = todos.filter(t => !t.done);
+  else if (currentFilter === 'done') filtered = todos.filter(t => t.done);
+
+  // ソート: 未完了は期限近い順（期限なしは後ろ）→ 完了は後ろ
+  filtered.sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (a.due && b.due) return a.due.localeCompare(b.due);
+    if (a.due) return -1;
+    if (b.due) return 1;
+    return b.createdAt - a.createdAt;
+  });
+
+  // 件数
+  const active = todos.filter(t => !t.done).length;
+  document.getElementById('todoCount').textContent = `${active}件`;
+
+  if (filtered.length === 0) {
+    let msg = '';
+    if (currentFilter === 'active') msg = '<span class="emoji">✨</span>やることなし！すごい';
+    else if (currentFilter === 'done') msg = '<span class="emoji">📋</span>完了したTODOはまだないよ';
+    else msg = '<span class="emoji">🌱</span>最初のTODOを追加してみよう';
+    list.innerHTML = `<div class="todo-empty">${msg}</div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  filtered.forEach(todo => {
+    const item = document.createElement('div');
+    const dc = dueClass(todo.due, todo.done);
+    item.className = 'todo-item' + (todo.done ? ' done' : '') + (dc ? ' ' + dc : '');
+    item.innerHTML = `
+      <div class="todo-check ${todo.done ? 'checked' : ''}" data-id="${todo.id}">${todo.done ? '✓' : ''}</div>
+      <div class="todo-body">
+        <div class="todo-text"></div>
+        ${todo.due ? `<div class="todo-due ${dc}">📅 ${formatDue(todo.due)}</div>` : ''}
+      </div>
+      <button class="todo-delete" data-del="${todo.id}">✕</button>
+    `;
+    item.querySelector('.todo-text').textContent = todo.text;
+    list.appendChild(item);
+  });
+
+  // イベント
+  list.querySelectorAll('.todo-check').forEach(el => {
+    el.addEventListener('click', () => toggleTodo(el.dataset.id));
+  });
+  list.querySelectorAll('.todo-delete').forEach(el => {
+    el.addEventListener('click', () => deleteTodo(el.dataset.del));
+  });
+}
+
+// ===== TODO 操作 =====
+function addTodo() {
+  const input = document.getElementById('todoInput');
+  const dueInput = document.getElementById('todoDueInput');
+  const text = input.value.trim();
+  if (!text) {
+    input.focus();
+    return;
+  }
+  todos.push({
+    id: 't' + Date.now(),
+    text: text,
+    due: dueInput.value || null,
+    done: false,
+    createdAt: Date.now()
+  });
+  input.value = '';
+  dueInput.value = '';
+  saveTodos();
+  renderTodos();
+}
+
+// ===== 自然文解析 =====
+function parseNaturalText(rawText) {
+  let text = rawText.trim();
+  if (!text) return null;
+
+  const now = new Date();
+  let dueDate = null;
+  let dueTime = null;
+  let hint = [];
+
+  // ----- 日付の解析 -----
+  const datePatterns = [
+    { re: /今日/, offset: 0 },
+    { re: /きょう/, offset: 0 },
+    { re: /明日/, offset: 1 },
+    { re: /あした/, offset: 1 },
+    { re: /あす/, offset: 1 },
+    { re: /明後日/, offset: 2 },
+    { re: /あさって/, offset: 2 },
+    { re: /(\d+)日後/, offsetFromMatch: m => +m[1] },
+    { re: /来週末/, offset: null, special: 'nextWeekend' },
+    { re: /今週末/, offset: null, special: 'thisWeekend' },
+    { re: /来週月曜/, offset: null, special: 'nextDow', dow: 1 },
+    { re: /来週火曜/, offset: null, special: 'nextDow', dow: 2 },
+    { re: /来週水曜/, offset: null, special: 'nextDow', dow: 3 },
+    { re: /来週木曜/, offset: null, special: 'nextDow', dow: 4 },
+    { re: /来週金曜/, offset: null, special: 'nextDow', dow: 5 },
+    { re: /来週土曜/, offset: null, special: 'nextDow', dow: 6 },
+    { re: /来週日曜/, offset: null, special: 'nextDow', dow: 0 },
+    { re: /来週/, offset: 7 },
+    { re: /来月/, offset: null, special: 'nextMonth' },
+  ];
+
+  for (const p of datePatterns) {
+    const m = text.match(p.re);
+    if (m) {
+      let target = new Date(now);
+      target.setHours(0, 0, 0, 0);
+      if (p.special === 'nextMonth') {
+        target.setMonth(target.getMonth() + 1);
+      } else if (p.special === 'thisWeekend') {
+        const dow = target.getDay();
+        target.setDate(target.getDate() + ((6 - dow + 7) % 7 || 7));
+      } else if (p.special === 'nextWeekend') {
+        const dow = target.getDay();
+        target.setDate(target.getDate() + ((6 - dow + 7) % 7 || 7) + 7);
+      } else if (p.special === 'nextDow') {
+        const dow = target.getDay();
+        let diff = (p.dow - dow + 7) % 7;
+        if (diff === 0) diff = 7;
+        target.setDate(target.getDate() + diff + 7);
+      } else {
+        const offset = p.offsetFromMatch ? p.offsetFromMatch(m) : p.offset;
+        target.setDate(target.getDate() + offset);
+      }
+      dueDate = target;
+      text = text.replace(p.re, '').trim();
+      hint.push(formatDateForHint(dueDate));
+      break;
+    }
+  }
+
+  // 5/20, 5月20日 みたいな絶対日付
+  if (!dueDate) {
+    const m1 = text.match(/(\d{1,2})[\/月](\d{1,2})日?/);
+    if (m1) {
+      const month = +m1[1] - 1;
+      const day = +m1[2];
+      const target = new Date(now.getFullYear(), month, day);
+      target.setHours(0, 0, 0, 0);
+      // 過去日付なら来年扱い
+      const todayMidnight = new Date(now);
+      todayMidnight.setHours(0, 0, 0, 0);
+      if (target < todayMidnight) target.setFullYear(target.getFullYear() + 1);
+      dueDate = target;
+      text = text.replace(m1[0], '').trim();
+      hint.push(formatDateForHint(dueDate));
+    }
+  }
+
+  // ----- 時刻の解析 -----
+  // 14時半, 10時30分, 10時, 10:00, 10:30
+  let timeMatch = text.match(/(\d{1,2})時(半|(\d{1,2})分?)?/);
+  if (timeMatch) {
+    const h = +timeMatch[1];
+    let m = 0;
+    if (timeMatch[2] === '半') m = 30;
+    else if (timeMatch[3]) m = +timeMatch[3];
+    dueTime = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+    text = text.replace(timeMatch[0], '').trim();
+    hint.push(dueTime);
+  } else {
+    timeMatch = text.match(/(\d{1,2}):(\d{2})/);
+    if (timeMatch) {
+      const h = +timeMatch[1];
+      const m = +timeMatch[2];
+      dueTime = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      text = text.replace(timeMatch[0], '').trim();
+      hint.push(dueTime);
+    }
+  }
+
+  // 時刻だけ指定されてて日付がない → 今日扱い
+  if (dueTime && !dueDate) {
+    dueDate = new Date(now);
+    dueDate.setHours(0, 0, 0, 0);
+    hint.unshift('今日');
+  }
+
+  // ----- ノイズワードの除去 -----
+  text = text.replace(/までに?/g, '').replace(/まで/g, '').trim();
+  text = text.replace(/^[、,。\s]+/, '').replace(/[、,。\s]+$/, '').trim();
+
+  if (!text) return null;
+
+  return {
+    text: text,
+    due: dueDate ? dateKey2(dueDate) : null,
+    time: dueTime,
+    hint: hint.join(' ')
+  };
+}
+
+function dateKey2(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function formatDateForHint(d) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = Math.round((d - today) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return '今日';
+  if (diff === 1) return '明日';
+  if (diff === 2) return '明後日';
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+// クイック追加プレビュー
+const quickInput = document.getElementById('quickInput');
+const quickHint = document.getElementById('quickHint');
+
+quickInput.addEventListener('input', () => {
+  const val = quickInput.value.trim();
+  if (!val) {
+    quickHint.textContent = '時刻・日付を自動で読み取るよ';
+    quickHint.className = 'quick-add-hint';
+    return;
+  }
+  const parsed = parseNaturalText(val);
+  if (parsed && (parsed.due || parsed.time)) {
+    let preview = `→「${parsed.text}」`;
+    if (parsed.hint) preview += ` ／ 期限: ${parsed.hint}`;
+    quickHint.textContent = preview;
+    quickHint.className = 'quick-add-hint preview';
+  } else if (parsed) {
+    quickHint.textContent = `→「${parsed.text}」（期限なし）`;
+    quickHint.className = 'quick-add-hint';
+  } else {
+    quickHint.textContent = '時刻・日付を自動で読み取るよ';
+    quickHint.className = 'quick-add-hint';
+  }
+});
+
+function quickAdd() {
+  const val = quickInput.value.trim();
+  if (!val) {
+    quickInput.focus();
+    return;
+  }
+  const parsed = parseNaturalText(val);
+  if (!parsed) {
+    quickHint.textContent = '内容が空です';
+    quickHint.className = 'quick-add-hint error';
+    return;
+  }
+  const todoText = parsed.time ? `${parsed.text}（${parsed.time}まで）` : parsed.text;
+  todos.push({
+    id: 't' + Date.now(),
+    text: todoText,
+    due: parsed.due,
+    time: parsed.time || null,
+    done: false,
+    createdAt: Date.now()
+  });
+  quickInput.value = '';
+  quickHint.textContent = '時刻・日付を自動で読み取るよ';
+  quickHint.className = 'quick-add-hint';
+  saveTodos();
+  renderTodos();
+}
+
+document.getElementById('quickAddBtn').addEventListener('click', quickAdd);
+quickInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') quickAdd();
+});
+
+// ===== JSONインポート =====
+function jsonImport() {
+  const ta = document.getElementById('jsonInput');
+  const result = document.getElementById('jsonResult');
+  const raw = ta.value.trim();
+  if (!raw) {
+    result.textContent = '何か貼り付けてね';
+    result.className = 'json-result error';
+    return;
+  }
+
+  // ```json ... ``` のフェンスを除去
+  let cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+  let parsed;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch (e) {
+    result.textContent = '❌ JSONを読めなかった: ' + e.message;
+    result.className = 'json-result error';
+    return;
+  }
+
+  // 単一オブジェクト or 配列に対応
+  const items = Array.isArray(parsed) ? parsed : [parsed];
+  let added = 0;
+  let skipped = 0;
+
+  items.forEach(item => {
+    if (!item || typeof item !== 'object' || !item.text) {
+      skipped++;
+      return;
+    }
+    const todoText = item.time ? `${item.text}（${item.time}まで）` : item.text;
+    todos.push({
+      id: 't' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      text: todoText,
+      due: item.due || null,
+      time: item.time || null,
+      done: false,
+      createdAt: Date.now()
+    });
+    added++;
+  });
+
+  if (added > 0) {
+    ta.value = '';
+    result.textContent = `✨ ${added}件追加${skipped > 0 ? `（${skipped}件スキップ）` : ''}`;
+    result.className = 'json-result success';
+    saveTodos();
+    renderTodos();
+  } else {
+    result.textContent = '❌ 有効なTODOがなかった（"text"フィールドが必要）';
+    result.className = 'json-result error';
+  }
+}
+
+document.getElementById('jsonImportBtn').addEventListener('click', jsonImport);
+
+function toggleTodo(id) {
+  const t = todos.find(t => t.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  t.completedAt = t.done ? Date.now() : null;
+  saveTodos();
+  renderTodos();
+}
+
+function deleteTodo(id) {
+  todos = todos.filter(t => t.id !== id);
+  saveTodos();
+  renderTodos();
+}
+
+// ===== イベント =====
+document.getElementById('todoAddBtn').addEventListener('click', addTodo);
+document.getElementById('todoInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addTodo();
+});
+
+document.querySelectorAll('.todo-filter').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.todo-filter').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTodos();
+  });
+});
+
+// ===== 初期化 =====
+renderBrandDate();
+renderNews();
+renderTodos();
+
+// 毎分ニュースと期限表示を更新（日付変わりに対応）
+setInterval(() => {
+  renderBrandDate();
+  renderNews();
+  renderTodos();
+}, 60000);
+</script>
+</body>
+</html>
