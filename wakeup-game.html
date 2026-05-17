@@ -52,6 +52,23 @@
     padding: 20px 16px 100px;
   }
 
+  .topbar {
+    display: flex;
+    align-items: center;
+    padding: 4px 0 8px;
+  }
+  .back-link {
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .topbar-spacer { flex: 1; }
+
   .header { text-align: center; padding: 16px 0 24px; }
   .header h1 { font-size: 22px; font-weight: 900; letter-spacing: 0.05em; }
   .header .sub {
@@ -565,6 +582,14 @@
   .alarm-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
   .alarm-btn.wake { background: white; color: var(--ink); }
   .alarm-btn.snooze { background: var(--accent-2); color: white; }
+  .alarm-btn.home {
+    background: var(--ink);
+    color: white;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+    font-size: 14px;
+  }
   .alarm-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .snooze-info {
     color: white;
@@ -576,6 +601,11 @@
 </head>
 <body>
 <div class="app">
+
+  <div class="topbar">
+    <a class="back-link" href="index.html">← 戻る</a>
+    <div class="topbar-spacer"></div>
+  </div>
 
   <div class="header">
     <h1>🌅 もちまる起床ゲーム 🌅</h1>
@@ -683,6 +713,7 @@
   <div class="alarm-buttons">
     <button class="alarm-btn wake" id="alarmWake">起きた！ ✨</button>
     <button class="alarm-btn snooze" id="alarmSnooze">あと3分... 😴</button>
+    <a class="alarm-btn home" href="index.html">🏠 ホームに戻る</a>
   </div>
 </div>
 

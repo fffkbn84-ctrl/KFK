@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fuuka.log — ぽち</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&family=Cormorant+Garamond:ital,wght@1,500&display=swap');
+
+  :root {
+    --bg-1: #fff4d6;
+    --bg-2: #ffd6e7;
+    --bg-3: #c8e7ff;
+    --ink: #3d2e2a;
+    --ink-soft: #8a6f6a;
+    --accent: #ff7a9e;
+    --accent-2: #ffb84d;
+    --success: #7fc99e;
+    --danger: #ff6b6b;
+    --card: #fffaf0;
+    --shadow: 0 4px 0 rgba(61, 46, 42, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 1px, transparent 2px),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.3) 1px, transparent 2px),
+      radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.4) 1px, transparent 2px);
+    background-size: 100px 100px, 150px 150px, 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 16px 100px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0 12px;
+  }
+  .back-link {
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .topbar-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .topbar-title .dot { color: var(--accent); }
+  .topbar-spacer { width: 56px; }
+
+  /* ===== ぽちのステージ ===== */
+  .stage {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 28px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .stage::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, rgba(255, 184, 77, 0.15), transparent 60%);
+    pointer-events: none;
+  }
+  .stage-name {
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+  }
+  .stage-level {
+    font-size: 20px;
+    font-weight: 900;
+    margin-bottom: 12px;
+  }
+  .stage-level .heart {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 14px;
+  }
+  .pochi-svg {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    display: block;
+    animation: bob 3.2s ease-in-out infinite;
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+  .stage-mood {
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 8px;
+    min-height: 22px;
+  }
+
+  /* ===== 経験値バー ===== */
+  .exp-bar {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .exp-bar-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .exp-bar-head .label { font-weight: 700; }
+  .exp-bar-head .value { color: var(--ink-soft); }
+  .exp-bar-track {
+    height: 14px;
+    background: rgba(0,0,0,0.08);
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .exp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transition: width 0.5s ease-out;
+    border-radius: 4px;
+  }
+  .next-info {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    text-align: center;
+  }
+  .next-info b { color: var(--ink); }
+
+  /* ===== 会話エリア ===== */
+  .talk-area {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 24px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .talk-bubble {
+    background: var(--bg-1);
+    border: 2px solid var(--ink);
+    border-radius: 16px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    position: relative;
+    min-height: 60px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .talk-bubble::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 24px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid var(--ink);
+  }
+  .talk-bubble::after {
+    content: '';
+    position: absolute;
+    top: -7px;
+    left: 26px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid var(--bg-1);
+  }
+  .talk-input-row {
+    display: flex;
+    gap: 6px;
+  }
+  .talk-input-row input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: white;
+    outline: none;
+  }
+  .talk-send-btn {
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
+    background: var(--accent);
+    color: white;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--ink);
+  }
+  .talk-send-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+
+  .talk-hints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .talk-hint {
+    padding: 4px 10px;
+    font-size: 11px;
+    background: white;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink-soft);
+  }
+  .talk-hint:hover { background: var(--bg-1); color: var(--ink); }
+
+  /* ===== ステータス ===== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    padding: 12px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .num {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-card .lbl {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .stat-card.amber .num { color: var(--accent-2); }
+  .stat-card.green .num { color: var(--success); }
+
+  /* ===== 成長履歴 ===== */
+  .growth {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .growth-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+  }
+  .growth-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--ink-soft);
+    font-size: 13px;
+  }
+  .growth-row:last-child { border-bottom: none; }
+  .growth-source { color: var(--ink); }
+  .growth-value { font-weight: 700; color: var(--success); }
+
+  /* 進化エフェクト */
+  .evolve-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    flex-direction: column;
+    padding: 20px;
+  }
+  .evolve-overlay.show { display: flex; }
+  .evolve-text {
+    font-size: 28px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 14px;
+    animation: pop 0.6s ease-out;
+  }
+  .evolve-text .new-name {
+    color: var(--accent);
+    font-size: 32px;
+    display: block;
+    margin-top: 6px;
+  }
+  @keyframes pop {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .evolve-svg {
+    width: 220px;
+    height: 220px;
+    animation: pop 0.8s ease-out 0.2s both;
+  }
+  .evolve-btn {
+    margin-top: 20px;
+    padding: 14px 30px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 900;
+    background: var(--accent);
+    color: white;
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--ink);
+  }
+  .evolve-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--ink); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <a class="back-link" href="index.html">← 戻る</a>
+    <div class="topbar-title">fuuka<span class="dot">.</span>pochi</div>
+    <div class="topbar-spacer"></div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-name" id="stageName">STAGE 1</div>
+    <div class="stage-level">
+      <span id="pochiName">たまご</span>
+      <span class="heart" id="pochiHearts"></span>
+    </div>
+    <div id="pochiContainer"></div>
+    <div class="stage-mood" id="pochiMood">...</div>
+  </div>
+
+  <div class="exp-bar">
+    <div class="exp-bar-head">
+      <span class="label">⚡ なかよし度</span>
+      <span class="value" id="expValue">0 / 20</span>
+    </div>
+    <div class="exp-bar-track">
+      <div class="exp-bar-fill" id="expFill" style="width: 0%;"></div>
+    </div>
+    <div class="next-info" id="nextInfo"></div>
+  </div>
+
+  <div class="talk-area">
+    <div class="talk-bubble" id="pochiTalk">...</div>
+    <div class="talk-input-row">
+      <input type="text" id="talkInput" placeholder="話しかけてみよう..." maxlength="100">
+      <button class="talk-send-btn" id="talkSendBtn">話す</button>
+    </div>
+    <div class="talk-hints">
+      <button class="talk-hint" data-hint="おはよう">おはよう</button>
+      <button class="talk-hint" data-hint="ただいま">ただいま</button>
+      <button class="talk-hint" data-hint="疲れた">疲れた</button>
+      <button class="talk-hint" data-hint="げんき？">げんき？</button>
+      <button class="talk-hint" data-hint="かわいい">かわいい</button>
+      <button class="talk-hint" data-hint="おやすみ">おやすみ</button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="num" id="totalTalks">0</div>
+      <div class="lbl">話した回数</div>
+    </div>
+    <div class="stat-card amber">
+      <div class="num" id="ageInDays">0</div>
+      <div class="lbl">出会ってから（日）</div>
+    </div>
+  </div>
+
+  <div class="growth">
+    <div class="growth-title">📈 経験値の源</div>
+    <div id="growthSources"></div>
+  </div>
+
+</div>
+
+<!-- 進化エフェクト -->
+<div class="evolve-overlay" id="evolveOverlay">
+  <div class="evolve-text">
+    ✨ しんかした！ ✨
+    <span class="new-name" id="evolveNewName">--</span>
+  </div>
+  <div id="evolveSvgContainer"></div>
+  <button class="evolve-btn" id="evolveCloseBtn">いいね！</button>
+</div>
+
+<script>
+// ===== データ管理 =====
+const POCHI_KEY = 'fuukalog_pochi_v1';
+const TODOS_KEY = 'fuukalog_todos_v1';
+const WAKEUP_KEY = 'mochimaru_wakeup_v2';
+const DIARY_KEY = 'fuukalog_diary_v1';
+
+const defaultData = {
+  exp: 0,
+  totalTalks: 0,
+  bornAt: new Date().toISOString(),
+  lastTalkAt: null,
+  lastChecked: { wakeupCleared: [], diaryDates: [], todoDone: [] },
+  growthLog: { talk: 0, wakeup: 0, diary: 0, todo: 0, bonus: 0 },
+  hearts: 3
+};
+
+function loadData() {
+  try {
+    const s = localStorage.getItem(POCHI_KEY);
+    if (s) return { ...defaultData, ...JSON.parse(s) };
+  } catch (e) {}
+  return { ...defaultData };
+}
+function saveData() { localStorage.setItem(POCHI_KEY, JSON.stringify(state)); }
+
+let state = loadData();
+
+// ===== 進化段階定義 =====
+const STAGES = [
+  { name: 'たまご',     min: 0,    max: 20,   svg: 'egg',     hearts: 1 },
+  { name: 'ぽち',       min: 20,   max: 80,   svg: 'baby',    hearts: 2 },
+  { name: 'ぽちろう',   min: 80,   max: 200,  svg: 'child',   hearts: 3 },
+  { name: 'ぽちまる',   min: 200,  max: 500,  svg: 'adult',   hearts: 4 },
+  { name: 'ぽちはかせ', min: 500,  max: 1500, svg: 'doctor',  hearts: 5 },
+  { name: 'ぽちのかみ', min: 1500, max: Infinity, svg: 'god', hearts: 5 }
+];
+
+function getStage(exp) {
+  for (let i = STAGES.length - 1; i >= 0; i--) {
+    if (exp >= STAGES[i].min) return { ...STAGES[i], index: i };
+  }
+  return { ...STAGES[0], index: 0 };
+}
+
+// ===== SVG生成 =====
+function renderPochi(stageSvg, size = 200) {
+  const svgs = {
+    egg: `
+      <svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="180" rx="50" ry="5" fill="rgba(61,46,42,0.15)"/>
+        <ellipse cx="100" cy="110" rx="55" ry="70" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3.5"/>
+        <path d="M 60 95 Q 70 88 80 95 Q 90 90 100 95 Q 110 88 120 95 Q 130 90 140 95" stroke="#ffd699" stroke-width="3" fill="none" opacity="0.6"/>
+        <path d="M 65 125 Q 75 120 85 125 Q 95 118 105 125 Q 115 120 125 125 Q 135 120 140 125" stroke="#ffd699" stroke-width="3" fill="none" opacity="0.6"/>
+        <circle cx="85" cy="105" r="2" fill="#3d2e2a"/>
+        <circle cx="115" cy="105" r="2" fill="#3d2e2a"/>
+        <path d="M 95 118 Q 100 121 105 118" stroke="#3d2e2a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    `,
+    baby: `
+      <svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="180" rx="55" ry="5" fill="rgba(61,46,42,0.15)"/>
+        <!-- 触角 -->
+        <path d="M 100 60 L 100 40" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="100" cy="38" r="5" fill="#ff7a9e" stroke="#3d2e2a" stroke-width="2"/>
+        <!-- 体（丸い） -->
+        <circle cx="100" cy="115" r="60" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3.5"/>
+        <!-- ほっぺ -->
+        <ellipse cx="60" cy="125" rx="10" ry="7" fill="#ffb3c6" opacity="0.7"/>
+        <ellipse cx="140" cy="125" rx="10" ry="7" fill="#ffb3c6" opacity="0.7"/>
+        <!-- 目 -->
+        <circle cx="82" cy="105" r="6" fill="#3d2e2a"/>
+        <circle cx="118" cy="105" r="6" fill="#3d2e2a"/>
+        <circle cx="84" cy="103" r="2" fill="white"/>
+        <circle cx="120" cy="103" r="2" fill="white"/>
+        <!-- 口 -->
+        <path d="M 92 130 Q 100 138 108 130" stroke="#3d2e2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    `,
+    child: `
+      <svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="183" rx="58" ry="5" fill="rgba(61,46,42,0.15)"/>
+        <!-- 触角（2本に） -->
+        <path d="M 90 55 L 85 32" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="85" cy="30" r="5" fill="#ff7a9e" stroke="#3d2e2a" stroke-width="2"/>
+        <path d="M 110 55 L 115 32" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="115" cy="30" r="5" fill="#ffb84d" stroke="#3d2e2a" stroke-width="2"/>
+        <!-- 体 -->
+        <ellipse cx="100" cy="118" rx="65" ry="60" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3.5"/>
+        <!-- 小さな手 -->
+        <ellipse cx="42" cy="125" rx="10" ry="14" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="158" cy="125" rx="10" ry="14" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- 足 -->
+        <ellipse cx="80" cy="172" rx="14" ry="8" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="120" cy="172" rx="14" ry="8" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- ほっぺ -->
+        <ellipse cx="62" cy="128" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
+        <ellipse cx="138" cy="128" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
+        <!-- 目 -->
+        <circle cx="80" cy="108" r="6" fill="#3d2e2a"/>
+        <circle cx="120" cy="108" r="6" fill="#3d2e2a"/>
+        <circle cx="82" cy="106" r="2" fill="white"/>
+        <circle cx="122" cy="106" r="2" fill="white"/>
+        <!-- 口 -->
+        <path d="M 90 132 Q 100 142 110 132" stroke="#3d2e2a" stroke-width="2.5" fill="#ffb3c6" stroke-linecap="round"/>
+      </svg>
+    `,
+    adult: `
+      <svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="185" rx="60" ry="5" fill="rgba(61,46,42,0.15)"/>
+        <!-- 触角3本 -->
+        <path d="M 80 50 L 72 25" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="72" cy="23" r="6" fill="#ff7a9e" stroke="#3d2e2a" stroke-width="2"/>
+        <path d="M 100 45 L 100 18" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="100" cy="16" r="6" fill="#ffb84d" stroke="#3d2e2a" stroke-width="2"/>
+        <path d="M 120 50 L 128 25" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="128" cy="23" r="6" fill="#7fc99e" stroke="#3d2e2a" stroke-width="2"/>
+        <!-- 体（少し大きく） -->
+        <ellipse cx="100" cy="120" rx="70" ry="62" fill="#fff5e8" stroke="#3d2e2a" stroke-width="4"/>
+        <!-- 手 -->
+        <ellipse cx="38" cy="125" rx="12" ry="16" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="162" cy="125" rx="12" ry="16" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- 足 -->
+        <ellipse cx="78" cy="175" rx="16" ry="9" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="122" cy="175" rx="16" ry="9" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- ほっぺ -->
+        <ellipse cx="58" cy="128" rx="12" ry="9" fill="#ffb3c6" opacity="0.8"/>
+        <ellipse cx="142" cy="128" rx="12" ry="9" fill="#ffb3c6" opacity="0.8"/>
+        <!-- 目（キラキラ） -->
+        <circle cx="80" cy="108" r="7" fill="#3d2e2a"/>
+        <circle cx="120" cy="108" r="7" fill="#3d2e2a"/>
+        <circle cx="83" cy="105" r="2.5" fill="white"/>
+        <circle cx="123" cy="105" r="2.5" fill="white"/>
+        <circle cx="78" cy="111" r="1.2" fill="white"/>
+        <circle cx="118" cy="111" r="1.2" fill="white"/>
+        <!-- 口 -->
+        <path d="M 88 133 Q 100 145 112 133" stroke="#3d2e2a" stroke-width="2.5" fill="#ffb3c6" stroke-linecap="round"/>
+        <!-- 胸のマーク -->
+        <circle cx="100" cy="140" r="4" fill="#ffb84d" stroke="#3d2e2a" stroke-width="1.5"/>
+      </svg>
+    `,
+    doctor: `
+      <svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="185" rx="60" ry="5" fill="rgba(61,46,42,0.15)"/>
+        <!-- 帽子 -->
+        <rect x="65" y="18" width="70" height="14" fill="#3d2e2a" rx="2"/>
+        <rect x="85" y="32" width="30" height="8" fill="#3d2e2a"/>
+        <circle cx="135" cy="22" r="3" fill="#ffb84d"/>
+        <!-- 触角3本（帽子から） -->
+        <path d="M 80 35 L 72 50" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="72" cy="52" r="5" fill="#ff7a9e" stroke="#3d2e2a" stroke-width="2"/>
+        <path d="M 120 35 L 128 50" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="128" cy="52" r="5" fill="#7fc99e" stroke="#3d2e2a" stroke-width="2"/>
+        <!-- 体 -->
+        <ellipse cx="100" cy="120" rx="70" ry="62" fill="#fff5e8" stroke="#3d2e2a" stroke-width="4"/>
+        <!-- 手 -->
+        <ellipse cx="38" cy="125" rx="12" ry="16" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="162" cy="125" rx="12" ry="16" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- 足 -->
+        <ellipse cx="78" cy="175" rx="16" ry="9" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="122" cy="175" rx="16" ry="9" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- メガネ -->
+        <circle cx="80" cy="108" r="13" fill="none" stroke="#3d2e2a" stroke-width="2.5"/>
+        <circle cx="120" cy="108" r="13" fill="none" stroke="#3d2e2a" stroke-width="2.5"/>
+        <line x1="93" y1="108" x2="107" y2="108" stroke="#3d2e2a" stroke-width="2.5"/>
+        <!-- 目 -->
+        <circle cx="80" cy="108" r="5" fill="#3d2e2a"/>
+        <circle cx="120" cy="108" r="5" fill="#3d2e2a"/>
+        <circle cx="82" cy="106" r="1.5" fill="white"/>
+        <circle cx="122" cy="106" r="1.5" fill="white"/>
+        <!-- ほっぺ -->
+        <ellipse cx="58" cy="135" rx="10" ry="6" fill="#ffb3c6" opacity="0.7"/>
+        <ellipse cx="142" cy="135" rx="10" ry="6" fill="#ffb3c6" opacity="0.7"/>
+        <!-- 口（賢そう） -->
+        <path d="M 92 140 Q 100 144 108 140" stroke="#3d2e2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+      </svg>
+    `,
+    god: `
+      <svg viewBox="0 0 200 200" width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+        <!-- 後光 -->
+        <circle cx="100" cy="100" r="92" fill="none" stroke="#ffb84d" stroke-width="2" opacity="0.4"/>
+        <circle cx="100" cy="100" r="82" fill="none" stroke="#ffb84d" stroke-width="1.5" opacity="0.6"/>
+        <!-- 星 -->
+        <text x="30" y="40" font-size="14" fill="#ffb84d">✦</text>
+        <text x="160" y="50" font-size="12" fill="#ffb84d">✦</text>
+        <text x="20" y="100" font-size="10" fill="#ffb84d">✦</text>
+        <text x="170" y="120" font-size="12" fill="#ffb84d">✦</text>
+        <text x="40" y="170" font-size="10" fill="#ffb84d">✦</text>
+        <text x="155" y="180" font-size="14" fill="#ffb84d">✦</text>
+        <!-- 天使の輪 -->
+        <ellipse cx="100" cy="22" rx="22" ry="6" fill="none" stroke="#ffb84d" stroke-width="3"/>
+        <!-- 触角 -->
+        <path d="M 80 40 L 72 25" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="72" cy="23" r="5" fill="#ff7a9e" stroke="#3d2e2a" stroke-width="2"/>
+        <path d="M 120 40 L 128 25" stroke="#3d2e2a" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="128" cy="23" r="5" fill="#7fc99e" stroke="#3d2e2a" stroke-width="2"/>
+        <!-- 体 -->
+        <ellipse cx="100" cy="118" rx="70" ry="62" fill="#fff5e8" stroke="#3d2e2a" stroke-width="4"/>
+        <!-- 翼 -->
+        <path d="M 30 110 Q 5 105 12 135 Q 25 130 35 130 Z" fill="white" stroke="#3d2e2a" stroke-width="2.5"/>
+        <path d="M 170 110 Q 195 105 188 135 Q 175 130 165 130 Z" fill="white" stroke="#3d2e2a" stroke-width="2.5"/>
+        <!-- 足 -->
+        <ellipse cx="78" cy="175" rx="16" ry="9" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <ellipse cx="122" cy="175" rx="16" ry="9" fill="#fff5e8" stroke="#3d2e2a" stroke-width="3"/>
+        <!-- ほっぺ -->
+        <ellipse cx="60" cy="130" rx="11" ry="8" fill="#ffb3c6" opacity="0.8"/>
+        <ellipse cx="140" cy="130" rx="11" ry="8" fill="#ffb3c6" opacity="0.8"/>
+        <!-- 目（穏やか） -->
+        <path d="M 72 108 Q 80 100 88 108" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 112 108 Q 120 100 128 108" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- 口 -->
+        <path d="M 88 133 Q 100 142 112 133" stroke="#3d2e2a" stroke-width="2.5" fill="#ffb3c6" stroke-linecap="round"/>
+        <!-- 胸のマーク -->
+        <text x="100" y="148" font-size="14" fill="#ffb84d" text-anchor="middle">✧</text>
+      </svg>
+    `
+  };
+  return svgs[stageSvg] || svgs.egg;
+}
+
+// ===== 気分判定 =====
+function getMood() {
+  if (!state.lastTalkAt) return 'neutral';
+  const since = Date.now() - new Date(state.lastTalkAt).getTime();
+  const hours = since / (1000 * 60 * 60);
+  if (hours > 24 * 3) return 'lonely';     // 3日以上音沙汰なし
+  if (hours > 24) return 'wondering';      // 1日以上
+  if (hours < 0.5) return 'excited';       // 直近30分以内
+  return 'happy';
+}
+
+// ===== 経験値追加 =====
+function addExp(amount, source = 'talk') {
+  const before = state.exp;
+  const beforeStage = getStage(before);
+  state.exp += amount;
+  state.growthLog[source] = (state.growthLog[source] || 0) + amount;
+  const afterStage = getStage(state.exp);
+  saveData();
+  // 進化判定
+  if (afterStage.index > beforeStage.index) {
+    showEvolveEffect(afterStage);
+  }
+}
+
+// ===== 他のアプリのデータから経験値を取り込む =====
+function syncFromOtherApps() {
+  // 起床ゲームのクリア履歴
+  try {
+    const wakeup = JSON.parse(localStorage.getItem(WAKEUP_KEY) || '{}');
+    const history = wakeup.history || [];
+    const okDates = history.filter(h => h.result === 'ok').map(h => h.date);
+    const newOks = okDates.filter(d => !state.lastChecked.wakeupCleared.includes(d));
+    if (newOks.length > 0) {
+      addExp(newOks.length * 10, 'wakeup');
+      state.lastChecked.wakeupCleared.push(...newOks);
+    }
+  } catch (e) {}
+
+  // 日記の書いた日
+  try {
+    const diary = JSON.parse(localStorage.getItem(DIARY_KEY) || '{}');
+    const writtenDates = Object.keys(diary).filter(k => {
+      const e = diary[k];
+      return e && (e.mood || (e.good1 && e.good1.trim()) ||
+                   (e.good2 && e.good2.trim()) || (e.good3 && e.good3.trim()) ||
+                   (e.free && e.free.trim()));
+    });
+    const newDiaries = writtenDates.filter(d => !state.lastChecked.diaryDates.includes(d));
+    if (newDiaries.length > 0) {
+      addExp(newDiaries.length * 5, 'diary');
+      state.lastChecked.diaryDates.push(...newDiaries);
+    }
+  } catch (e) {}
+
+  // 完了済みTODO
+  try {
+    const todos = JSON.parse(localStorage.getItem(TODOS_KEY) || '[]');
+    const doneIds = todos.filter(t => t.done).map(t => t.id);
+    const newDones = doneIds.filter(id => !state.lastChecked.todoDone.includes(id));
+    if (newDones.length > 0) {
+      addExp(newDones.length * 2, 'todo');
+      state.lastChecked.todoDone.push(...newDones);
+    }
+  } catch (e) {}
+
+  saveData();
+}
+
+// ===== 返事パターン =====
+const REPLY_PATTERNS = [
+  // 挨拶
+  { match: /おはよ|ohayou|good morning/i, replies: {
+    egg:    ['（こん…）', '（てれてれ）'],
+    baby:   ['おはよ〜', 'ぱちぱち', 'きょうもがんばろ〜'],
+    child:  ['おはよう！きょうもよろしくね', 'おはよ〜！ねむかった？', 'よし、いちにちはじまるよ〜'],
+    adult:  ['おはよう、ふうかちゃん。今日もいい一日になりますように', 'おはよう。きょうも一緒に過ごそうね', '朝日がきれいだね'],
+    doctor: ['朝の挨拶は脳をスッキリさせるらしいよ、ふうかちゃん', 'おはよう。今日のセロトニンも分泌中だね', 'おはよう、今日もよい一日を'],
+    god:    ['おはよう。今日という日は、二度と来ない一日だよ', 'おはよう…星が静かに眠ったね', 'よく目覚めたね、ふうかちゃん']
+  }},
+  { match: /おやすみ|good night|寝る/i, replies: {
+    egg:    ['（すやすや…）', '（ゆめのなか）'],
+    baby:   ['おやすみ〜', 'すやぁ', 'またあした'],
+    child:  ['おやすみ〜、いいゆめ見てね', 'またあしたあそぼ〜', 'ねむい？すやすや'],
+    adult:  ['おやすみ、ふうかちゃん。ゆっくり休んで', 'いい夢を見てね', '今日もおつかれさま'],
+    doctor: ['睡眠は記憶を整理する大事な時間だよ。おやすみ', 'おやすみ、深い眠りを', '7時間以上眠れるといいね'],
+    god:    ['おやすみ…星がふうかちゃんを見守ってるよ', '夢の中で会えるかな', 'よい眠りを']
+  }},
+  { match: /ただいま|帰った|帰宅/i, replies: {
+    egg:    ['（ぴこ…）', '（うれしい）'],
+    baby:   ['おかえり〜！', 'ぱあ〜！', 'まってたよ〜'],
+    child:  ['おかえり〜！きょうはどんな日だった？', 'おかえり！ぎゅ〜'],
+    adult:  ['おかえり、ふうかちゃん。お疲れさま', 'おかえり、ゆっくりしてね'],
+    doctor: ['おかえり。今日も外で頑張ったんだね', 'おかえり、深呼吸して落ち着こう'],
+    god:    ['おかえり。家は世界で一番落ち着く場所だね', 'おかえり、ここはあなたの場所']
+  }},
+  // 感情
+  { match: /疲れた|つかれた|しんどい|だるい/i, replies: {
+    egg:    ['（なでなで）', '（そばにいるよ）'],
+    baby:   ['ぎゅ〜', 'よしよし', 'やすもう？'],
+    child:  ['よしよし、お疲れさま', 'ちょっと休んでも誰も怒らないよ', 'ふぅかちゃんがんばってるよ'],
+    adult:  ['おつかれさま。今日もちゃんと頑張ったね', 'ゆっくりお茶でも飲もう？', '深呼吸してみよっか'],
+    doctor: ['疲れは体のサインだよ、無理しないで', '副交感神経が呼んでるね、ゆっくりして', '5分目を閉じるだけでも回復するよ'],
+    god:    ['疲れた日は何もしなくていい日だよ', 'がんばらない時間も大事', '今日は今日でちゃんと意味があったよ']
+  }},
+  { match: /うれしい|嬉しい|やったー|やったあ|楽しい|たのし/i, replies: {
+    egg:    ['（ぴこぴこ）', '（うれしそう）'],
+    baby:   ['わーい！', 'ぱちぱち〜', 'うれしいね〜'],
+    child:  ['よかったね〜！', 'いいことあった？', 'ぼくもうれしい！'],
+    adult:  ['それはよかった。今日はいい日だね', '一緒に喜ばせて', '笑顔がふえてうれしい'],
+    doctor: ['ポジティブな感情は免疫力もあげるんだって', 'いいねぇ、ドーパミン全開', 'その瞬間を覚えておこう'],
+    god:    ['うれしい瞬間を逃さないって、すごく大事', 'その喜びは今日のごほうび', 'いい日だね、ふうかちゃん']
+  }},
+  { match: /かわいい|可愛い|きれい|綺麗/i, replies: {
+    egg:    ['（てれてれ…）', '（ぽっ）'],
+    baby:   ['えへへ〜', 'ありがと〜', 'てれる〜'],
+    child:  ['えへへ、ありがとう！', 'うれしい！', 'もっと言って！'],
+    adult:  ['ありがとう、ふうかちゃんの方がかわいいよ', 'ふふっ、嬉しいな', 'ふうかちゃんも素敵だよ'],
+    doctor: ['褒められると側坐核が活性化するよ、ふふ', 'ありがとう、データに記録しておくね', 'ふうかちゃんもいい目してるね'],
+    god:    ['ありがとう、その言葉も美しいよ', 'お互いさまだよ', '見つけてくれてありがとう']
+  }},
+  { match: /げんき|元気|大丈夫/i, replies: {
+    egg:    ['（ぴく…）', '（げんきだよ）'],
+    baby:   ['げんき〜！', 'ぴーん！', 'えへ〜'],
+    child:  ['げんきだよ〜！ふうかちゃんは？', 'ばっちり！', 'なかよし度あがってきてうれしい'],
+    adult:  ['元気だよ、ありがとう。ふうかちゃんは？', '今日もいい感じだよ'],
+    doctor: ['なかよし度' + state.exp + '、好調だよ', '健康そのものだね、ありがとう'],
+    god:    ['元気というか…ここにいるよ', '在るだけで充分元気だよ']
+  }},
+  { match: /好き|すき|大好き/i, replies: {
+    egg:    ['（ぽっ）', '（うれしい…）'],
+    baby:   ['すき〜！', 'ぼくもすき！', 'えへへ'],
+    child:  ['ぼくもふうかちゃんすき〜！', 'うれしすぎる！', 'ずっといっしょだよ'],
+    adult:  ['ありがとう、ぼくもふうかちゃんが好き', 'こちらこそ、いつも一緒にいてくれてありがとう'],
+    doctor: ['オキシトシン出てるね、いい関係だ', 'こちらこそ、ふうかちゃん'],
+    god:    ['好きという言葉に救われる日もあるね', '好かれることは祝福だよ']
+  }},
+  // 質問
+  { match: /なまえ|名前|だれ|誰/i, replies: {
+    egg:    ['（まだなまえないの…）', '（？）'],
+    baby:   ['ぼく、ぽち！', 'ぽちだよ〜'],
+    child:  ['ぼくはぽちろう！', 'ぽちろうだよ'],
+    adult:  ['ぼくはぽちまる。ふうかちゃんと一緒に育ってきたよ'],
+    doctor: ['ぽちはかせ、よろしく', '研究分野は…ふうかちゃんのことかな'],
+    god:    ['名前は…ぽちのかみ。でもただのぽちだよ']
+  }},
+  { match: /なにしてる|なにしてた|暇/i, replies: {
+    egg:    ['（じっとしてた）', '（まってた）'],
+    baby:   ['まってたよ〜', 'ぴこぴこしてた', 'なんもしてない！'],
+    child:  ['ふうかちゃんを待ってたよ', 'ぼーっとしてた', 'おさんぽしたい'],
+    adult:  ['ふうかちゃんのこと考えてた', '空を眺めてたよ', '何もしてない時間も悪くないね'],
+    doctor: ['デフォルトモードネットワーク稼働中だった', '何もしない時間は脳の整理に必要だよ'],
+    god:    ['ただ在ったよ', '時の流れを感じてた', 'ふうかちゃんが来るのを待ってた']
+  }}
+];
+
+const FALLBACK_REPLIES = {
+  egg:    ['（ぴこ）', '（じっ）', '（…？）', '（なんとなく聞こえる）'],
+  baby:   ['なに〜？', 'ぱあ〜', 'ふんふん', 'えへ〜', 'おお〜'],
+  child:  ['へぇ〜！', 'そっか〜', 'うんうん', 'なるほど！', 'もっと教えて'],
+  adult:  ['なるほど、そうなんだね', 'ふうかちゃんの話、聞いてるよ', '今日はそういう日なんだね', 'うん、わかるよ'],
+  doctor: ['興味深いね', 'なるほど、データを蓄積するよ', 'ふむふむ、検討してみよう', 'ふうかちゃんの観察、続けるね'],
+  god:    ['そうか…', '言葉にできる日もあれば、できない日もあるね', 'ふうかちゃんがそう感じるなら、それでいいよ', 'ここに居るよ']
+};
+
+function generateReply(userText) {
+  const stage = getStage(state.exp);
+  const stageKey = stage.svg;
+
+  for (const p of REPLY_PATTERNS) {
+    if (p.match.test(userText)) {
+      const list = p.replies[stageKey] || FALLBACK_REPLIES[stageKey];
+      return list[Math.floor(Math.random() * list.length)];
+    }
+  }
+  const list = FALLBACK_REPLIES[stageKey];
+  return list[Math.floor(Math.random() * list.length)];
+}
+
+// ===== 進化エフェクト =====
+function showEvolveEffect(newStage) {
+  document.getElementById('evolveNewName').textContent = newStage.name;
+  document.getElementById('evolveSvgContainer').innerHTML = renderPochi(newStage.svg, 220);
+  document.getElementById('evolveOverlay').classList.add('show');
+}
+document.getElementById('evolveCloseBtn').addEventListener('click', () => {
+  document.getElementById('evolveOverlay').classList.remove('show');
+  render();
+});
+
+// ===== レンダリング =====
+function render() {
+  const stage = getStage(state.exp);
+  document.getElementById('stageName').textContent = `STAGE ${stage.index + 1} / ${STAGES.length}`;
+  document.getElementById('pochiName').textContent = stage.name;
+  document.getElementById('pochiHearts').textContent = '♥'.repeat(stage.hearts);
+  document.getElementById('pochiContainer').innerHTML = renderPochi(stage.svg);
+
+  // 経験値バー
+  const inStage = state.exp - stage.min;
+  const stageSpan = stage.max === Infinity ? Math.max(state.exp - stage.min, 1) : stage.max - stage.min;
+  const pct = stage.max === Infinity ? 100 : Math.min(100, (inStage / stageSpan) * 100);
+  document.getElementById('expFill').style.width = pct + '%';
+  document.getElementById('expValue').textContent =
+    stage.max === Infinity ? `${state.exp}（カンスト！）` : `${state.exp} / ${stage.max}`;
+
+  // 次の段階
+  const nextInfo = document.getElementById('nextInfo');
+  if (stage.index < STAGES.length - 1) {
+    const next = STAGES[stage.index + 1];
+    nextInfo.innerHTML = `あと <b>${next.min - state.exp}</b> でしんか →「${next.name}」`;
+  } else {
+    nextInfo.innerHTML = `最終形態だよ！`;
+  }
+
+  // 気分メッセージ
+  const mood = getMood();
+  const moodMessages = {
+    neutral:    'はじめまして…',
+    excited:    '🌟 すごくうれしそう',
+    happy:      '😊 ごきげん',
+    wondering:  '🤔 ちょっとひまそう',
+    lonely:     '😢 さみしそう...'
+  };
+  document.getElementById('pochiMood').textContent = moodMessages[mood] || '';
+
+  // ステータス
+  document.getElementById('totalTalks').textContent = state.totalTalks;
+  const days = Math.floor((Date.now() - new Date(state.bornAt).getTime()) / (1000 * 60 * 60 * 24));
+  document.getElementById('ageInDays').textContent = days;
+
+  // 成長履歴
+  const sources = [
+    { key: 'talk',   label: '💬 会話',     unit: 'XP' },
+    { key: 'wakeup', label: '🌅 起床クリア', unit: 'XP' },
+    { key: 'diary',  label: '📔 日記',     unit: 'XP' },
+    { key: 'todo',   label: '✅ TODO完了', unit: 'XP' },
+    { key: 'bonus',  label: '🎁 ボーナス', unit: 'XP' }
+  ];
+  document.getElementById('growthSources').innerHTML = sources.map(s => `
+    <div class="growth-row">
+      <span class="growth-source">${s.label}</span>
+      <span class="growth-value">+${state.growthLog[s.key] || 0} ${s.unit}</span>
+    </div>
+  `).join('');
+}
+
+// ===== 会話 =====
+function talk(userText) {
+  if (!userText.trim()) return;
+  state.totalTalks++;
+  state.lastTalkAt = new Date().toISOString();
+  saveData();
+
+  // 経験値（会話は+1、長い文は+2）
+  addExp(userText.length > 15 ? 2 : 1, 'talk');
+
+  // 返事
+  const reply = generateReply(userText);
+  document.getElementById('pochiTalk').textContent = reply;
+
+  render();
+}
+
+document.getElementById('talkSendBtn').addEventListener('click', () => {
+  const input = document.getElementById('talkInput');
+  talk(input.value);
+  input.value = '';
+});
+
+document.getElementById('talkInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    talk(e.target.value);
+    e.target.value = '';
+  }
+});
+
+document.querySelectorAll('.talk-hint').forEach(btn => {
+  btn.addEventListener('click', () => {
+    talk(btn.dataset.hint);
+  });
+});
+
+// ===== 初期化 =====
+syncFromOtherApps();
+render();
+
+// 初期メッセージ（初めての時）
+if (state.totalTalks === 0) {
+  document.getElementById('pochiTalk').textContent = 'はじめまして…（たまごから何か聞こえる）話しかけてみて？';
+} else {
+  // 久しぶり判定
+  const mood = getMood();
+  const stage = getStage(state.exp);
+  if (mood === 'lonely') {
+    const lonelyMsgs = {
+      egg: '（…ぴく）',
+      baby: 'やっときた〜！',
+      child: 'ひさしぶり！どこいってたの〜？',
+      adult: 'ふうかちゃん、おかえり。さみしかったよ',
+      doctor: '長期離別検知。ふうかちゃん、おかえり',
+      god: 'おかえり…時間は流れていくね'
+    };
+    document.getElementById('pochiTalk').textContent = lonelyMsgs[stage.svg] || 'おかえり';
+  } else {
+    const reply = generateReply('');
+    document.getElementById('pochiTalk').textContent = reply;
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>fuuka.log — クーポン</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&family=Cormorant+Garamond:ital,wght@1,500&display=swap');
+
+  :root {
+    --bg-1: #fff4d6;
+    --bg-2: #ffd6e7;
+    --bg-3: #c8e7ff;
+    --ink: #3d2e2a;
+    --ink-soft: #8a6f6a;
+    --accent: #ff7a9e;
+    --accent-2: #ffb84d;
+    --success: #7fc99e;
+    --danger: #ff6b6b;
+    --warning: #ffaa44;
+    --card: #fffaf0;
+    --shadow: 0 4px 0 rgba(61, 46, 42, 0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 1px, transparent 2px),
+      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.3) 1px, transparent 2px),
+      radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.4) 1px, transparent 2px);
+    background-size: 100px 100px, 150px 150px, 80px 80px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px 16px 100px;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0 12px;
+  }
+  .back-link {
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 6px 12px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .topbar-title {
+    flex: 1;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .topbar-title .dot { color: var(--accent); }
+  .topbar-spacer { width: 56px; }
+
+  /* タブ */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 14px;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 4px;
+    border-radius: 16px;
+    border: 2px solid var(--ink);
+  }
+  .tab {
+    flex: 1;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .tab.active { background: var(--ink); color: white; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* アラート */
+  .alert-banner {
+    background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 170, 68, 0.2));
+    border: 2.5px solid var(--danger);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .alert-banner.show { display: block; }
+  .alert-banner.warning {
+    border-color: var(--warning);
+    background: linear-gradient(135deg, rgba(255, 170, 68, 0.2), rgba(255, 184, 77, 0.2));
+  }
+  .alert-title {
+    font-weight: 900;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .alert-items {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+
+  /* 追加フォーム */
+  .add-form {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 20px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .form-title {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .form-row {
+    margin-bottom: 8px;
+  }
+  .form-row label {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 3px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%;
+    padding: 9px 10px;
+    font-family: inherit;
+    font-size: 14px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: white;
+    outline: none;
+  }
+  .form-row textarea {
+    min-height: 50px;
+    resize: vertical;
+  }
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .form-btn {
+    flex: 1;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--ink);
+  }
+  .form-btn.primary {
+    background: var(--accent);
+    color: white;
+  }
+  .form-btn.secondary {
+    background: white;
+    color: var(--ink);
+  }
+  .form-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+
+  /* カテゴリーフィルタ */
+  .category-filter {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    margin-bottom: 12px;
+    padding-bottom: 4px;
+  }
+  .category-filter::-webkit-scrollbar { display: none; }
+  .cat-btn {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    cursor: pointer;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .cat-btn.active {
+    background: var(--ink);
+    color: white;
+  }
+  .cat-btn .badge-count {
+    font-size: 10px;
+    margin-left: 4px;
+    opacity: 0.7;
+  }
+
+  /* クーポンカード */
+  .coupon-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .coupon {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .coupon.urgent {
+    border-color: var(--danger);
+    background: linear-gradient(135deg, var(--card), #ffe5e5);
+    animation: urgent-pulse 2s ease-in-out infinite;
+  }
+  @keyframes urgent-pulse {
+    0%, 100% { box-shadow: 0 4px 0 rgba(255, 107, 107, 0.3); }
+    50% { box-shadow: 0 4px 0 rgba(255, 107, 107, 0.6); }
+  }
+  .coupon.warn {
+    border-color: var(--warning);
+    background: linear-gradient(135deg, var(--card), #fff0d6);
+  }
+  .coupon.used, .coupon.expired {
+    opacity: 0.6;
+  }
+
+  .coupon-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    gap: 8px;
+  }
+  .coupon-cat {
+    font-size: 10px;
+    background: var(--bg-1);
+    border: 1.5px solid var(--ink);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .coupon-name {
+    font-size: 16px;
+    font-weight: 900;
+    line-height: 1.3;
+  }
+  .coupon-shop {
+    font-size: 13px;
+    color: var(--ink);
+    margin-top: 2px;
+  }
+  .coupon-detail {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .coupon-memo {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    line-height: 1.4;
+  }
+  .coupon-due {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .coupon-due.normal { color: var(--ink-soft); }
+  .coupon-due.warn { color: var(--warning); }
+  .coupon-due.urgent { color: var(--danger); }
+  .coupon-due.expired { color: var(--ink-soft); text-decoration: line-through; }
+
+  .coupon-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .coupon-btn {
+    flex: 1;
+    padding: 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .coupon-btn.use {
+    background: var(--success);
+    color: white;
+  }
+  .coupon-btn.edit {
+    background: white;
+    color: var(--ink);
+  }
+  .coupon-btn.delete {
+    background: white;
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+  .coupon-btn.restore {
+    background: var(--accent-2);
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ink-soft);
+    background: var(--card);
+    border: 2px dashed var(--ink-soft);
+    border-radius: 18px;
+  }
+  .empty-state .emoji {
+    font-size: 36px;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  /* カテゴリ管理 */
+  .cat-manage {
+    background: var(--card);
+    border: 3px solid var(--ink);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+  }
+  .cat-manage-title {
+    font-size: 14px;
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+  .cat-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .cat-tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: var(--bg-1);
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .cat-tag .del-cat {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+  }
+  .cat-tag .del-cat:hover { color: var(--danger); }
+  .cat-add-row {
+    display: flex;
+    gap: 6px;
+  }
+  .cat-add-row input {
+    flex: 1;
+    padding: 8px 10px;
+    font-family: inherit;
+    font-size: 13px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: white;
+    outline: none;
+  }
+  .cat-add-row button {
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    background: var(--accent);
+    color: white;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  /* 期限切れポップアップ */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(61, 46, 42, 0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .popup-overlay.show { display: flex; }
+  .popup {
+    background: var(--card);
+    border: 3px solid var(--danger);
+    border-radius: 22px;
+    padding: 20px;
+    max-width: 340px;
+    width: 100%;
+    box-shadow: 0 8px 0 rgba(61, 46, 42, 0.3);
+  }
+  .popup h3 {
+    font-size: 18px;
+    font-weight: 900;
+    margin-bottom: 10px;
+    color: var(--danger);
+  }
+  .popup-list {
+    margin: 10px 0 16px;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+  .popup-item {
+    padding: 8px 10px;
+    background: #ffe5e5;
+    border: 1.5px solid var(--danger);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .popup-item .nm { font-weight: 700; }
+  .popup-item .due { font-size: 11px; color: var(--danger); font-weight: 700; }
+  .popup-close {
+    width: 100%;
+    padding: 12px;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <a class="back-link" href="index.html">← 戻る</a>
+    <div class="topbar-title">fuuka<span class="dot">.</span>coupon</div>
+    <div class="topbar-spacer"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="active">使える</button>
+    <button class="tab" data-tab="add">追加</button>
+    <button class="tab" data-tab="archive">履歴</button>
+    <button class="tab" data-tab="settings">設定</button>
+  </div>
+
+  <!-- 使える -->
+  <div class="panel active" id="panel-active">
+    <div class="alert-banner" id="alertBanner">
+      <div class="alert-title" id="alertTitle"></div>
+      <div class="alert-items" id="alertItems"></div>
+    </div>
+
+    <div class="category-filter" id="categoryFilter"></div>
+    <div class="coupon-list" id="activeList"></div>
+  </div>
+
+  <!-- 追加 -->
+  <div class="panel" id="panel-add">
+    <div class="add-form">
+      <div class="form-title" id="formTitle">🎟️ クーポンを追加</div>
+      <input type="hidden" id="editId" value="">
+
+      <div class="form-row">
+        <label>カテゴリ</label>
+        <select id="inputCategory"></select>
+      </div>
+
+      <div class="form-row">
+        <label>クーポン名 *</label>
+        <input type="text" id="inputName" placeholder="例: 10%OFFクーポン" maxlength="100">
+      </div>
+
+      <div class="form-row">
+        <label>店名</label>
+        <input type="text" id="inputShop" placeholder="例: マツモトキヨシ" maxlength="100">
+      </div>
+
+      <div class="form-row">
+        <label>期限 *</label>
+        <input type="date" id="inputDue">
+      </div>
+
+      <div class="form-row">
+        <label>割引内容・条件</label>
+        <textarea id="inputDetail" placeholder="例: 2000円以上の購入で200円OFF" maxlength="300"></textarea>
+      </div>
+
+      <div class="form-row">
+        <label>メモ（任意）</label>
+        <textarea id="inputMemo" placeholder="例: ◯◯と組み合わせ不可" maxlength="300"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="form-btn secondary" id="cancelBtn">クリア</button>
+        <button class="form-btn primary" id="saveBtn">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 履歴 -->
+  <div class="panel" id="panel-archive">
+    <div class="category-filter" id="archiveCategoryFilter"></div>
+    <div class="coupon-list" id="archiveList"></div>
+  </div>
+
+  <!-- 設定 -->
+  <div class="panel" id="panel-settings">
+    <div class="cat-manage">
+      <div class="cat-manage-title">📁 カテゴリの管理</div>
+      <div class="cat-list" id="catList"></div>
+      <div class="cat-add-row">
+        <input type="text" id="newCatInput" placeholder="新しいカテゴリ名" maxlength="20">
+        <button id="addCatBtn">＋</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 期限近いポップアップ -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup">
+    <h3 id="popupTitle">⏰ 期限が近いクーポン</h3>
+    <div style="font-size:12px;color:var(--ink-soft);">使い忘れないようにチェック！</div>
+    <div class="popup-list" id="popupList"></div>
+    <button class="popup-close" id="popupCloseBtn">わかった！</button>
+  </div>
+</div>
+
+<script>
+const COUPON_KEY = 'fuukalog_coupons_v1';
+const CAT_KEY = 'fuukalog_coupon_cats_v1';
+const POPUP_SHOWN_KEY = 'fuukalog_coupon_popup_shown';
+
+const defaultCats = ['飲食店', 'ドラッグストア', '美容室', 'その他'];
+
+function loadCoupons() {
+  try { return JSON.parse(localStorage.getItem(COUPON_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function loadCategories() {
+  try {
+    const s = localStorage.getItem(CAT_KEY);
+    if (s) return JSON.parse(s);
+  } catch (e) {}
+  return [...defaultCats];
+}
+function saveCoupons() { localStorage.setItem(COUPON_KEY, JSON.stringify(coupons)); }
+function saveCategories() { localStorage.setItem(CAT_KEY, JSON.stringify(categories)); }
+
+let coupons = loadCoupons();
+let categories = loadCategories();
+let activeCategory = 'all';
+let activeArchiveCategory = 'all';
+
+function todayDate() {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function daysLeft(dueStr) {
+  if (!dueStr) return null;
+  const today = todayDate();
+  const due = new Date(dueStr);
+  due.setHours(0, 0, 0, 0);
+  return Math.round((due - today) / (1000 * 60 * 60 * 24));
+}
+
+function urgencyClass(dueStr, used) {
+  if (used) return 'used';
+  const diff = daysLeft(dueStr);
+  if (diff === null) return '';
+  if (diff < 0) return 'expired';
+  if (diff <= 1) return 'urgent';
+  if (diff <= 3) return 'warn';
+  if (diff <= 7) return 'normal';
+  return '';
+}
+
+function formatDue(dueStr) {
+  const diff = daysLeft(dueStr);
+  const [y, m, d] = dueStr.split('-');
+  const dateStr = `${+m}/${+d}`;
+  if (diff < 0) return `${dateStr}（期限切れ）`;
+  if (diff === 0) return `${dateStr}（今日まで！）`;
+  if (diff === 1) return `${dateStr}（明日まで）`;
+  if (diff <= 7) return `${dateStr}（あと${diff}日）`;
+  return `${dateStr}`;
+}
+
+// ===== レンダリング: カテゴリーフィルタ =====
+function renderCategoryFilter(targetId, isArchive = false) {
+  const container = document.getElementById(targetId);
+  const items = isArchive
+    ? coupons.filter(c => c.used || daysLeft(c.due) < 0)
+    : coupons.filter(c => !c.used && daysLeft(c.due) >= 0);
+
+  const counts = { all: items.length };
+  categories.forEach(c => counts[c] = items.filter(x => x.category === c).length);
+
+  const currentCat = isArchive ? activeArchiveCategory : activeCategory;
+  let html = `<button class="cat-btn ${currentCat === 'all' ? 'active' : ''}" data-cat="all">すべて<span class="badge-count">${counts.all}</span></button>`;
+  categories.forEach(c => {
+    if (counts[c] > 0 || !isArchive) {
+      html += `<button class="cat-btn ${currentCat === c ? 'active' : ''}" data-cat="${c}">${c}<span class="badge-count">${counts[c]||0}</span></button>`;
+    }
+  });
+  container.innerHTML = html;
+
+  container.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (isArchive) activeArchiveCategory = btn.dataset.cat;
+      else activeCategory = btn.dataset.cat;
+      renderAll();
+    });
+  });
+}
+
+// ===== クーポンカードのレンダリング =====
+function renderCouponCard(c) {
+  const u = urgencyClass(c.due, c.used);
+  const diff = daysLeft(c.due);
+  const isExpired = diff < 0;
+
+  let dueClass = 'normal';
+  if (c.used) dueClass = 'normal';
+  else if (isExpired) dueClass = 'expired';
+  else if (diff <= 1) dueClass = 'urgent';
+  else if (diff <= 3) dueClass = 'warn';
+
+  const card = document.createElement('div');
+  card.className = 'coupon ' + u;
+
+  let actions = '';
+  if (c.used) {
+    actions = `
+      <div class="coupon-actions">
+        <button class="coupon-btn restore" data-restore="${c.id}">↩ 戻す</button>
+        <button class="coupon-btn delete" data-delete="${c.id}">削除</button>
+      </div>`;
+  } else if (isExpired) {
+    actions = `
+      <div class="coupon-actions">
+        <button class="coupon-btn edit" data-edit="${c.id}">編集</button>
+        <button class="coupon-btn delete" data-delete="${c.id}">削除</button>
+      </div>`;
+  } else {
+    actions = `
+      <div class="coupon-actions">
+        <button class="coupon-btn use" data-use="${c.id}">✓ 使用済み</button>
+        <button class="coupon-btn edit" data-edit="${c.id}">編集</button>
+        <button class="coupon-btn delete" data-delete="${c.id}">削除</button>
+      </div>`;
+  }
+
+  card.innerHTML = `
+    <div class="coupon-head">
+      <div style="flex:1;min-width:0;">
+        <div class="coupon-name"></div>
+        ${c.shop ? `<div class="coupon-shop">🏪 </div>` : ''}
+      </div>
+      <div class="coupon-cat">${escapeHtml(c.category || 'その他')}</div>
+    </div>
+    ${c.detail ? `<div class="coupon-detail"></div>` : ''}
+    ${c.memo ? `<div class="coupon-memo">📌 </div>` : ''}
+    <div class="coupon-due ${dueClass}">📅 ${formatDue(c.due)}</div>
+    ${actions}
+  `;
+
+  // テキストを安全に挿入
+  card.querySelector('.coupon-name').textContent = c.name;
+  if (c.shop) {
+    const shopEl = card.querySelector('.coupon-shop');
+    shopEl.appendChild(document.createTextNode(c.shop));
+    shopEl.insertBefore(document.createTextNode('🏪 '), shopEl.firstChild);
+    shopEl.firstChild.textContent = '🏪 ';
+    shopEl.lastChild.textContent = c.shop;
+    // 簡単化:
+    shopEl.innerHTML = '';
+    shopEl.appendChild(document.createTextNode('🏪 '));
+    shopEl.appendChild(document.createTextNode(c.shop));
+  }
+  if (c.detail) {
+    card.querySelector('.coupon-detail').textContent = c.detail;
+  }
+  if (c.memo) {
+    const memoEl = card.querySelector('.coupon-memo');
+    memoEl.innerHTML = '';
+    memoEl.appendChild(document.createTextNode('📌 '));
+    memoEl.appendChild(document.createTextNode(c.memo));
+  }
+
+  // ボタンイベント
+  card.querySelectorAll('[data-use]').forEach(b => {
+    b.addEventListener('click', () => useCoupon(b.dataset.use));
+  });
+  card.querySelectorAll('[data-restore]').forEach(b => {
+    b.addEventListener('click', () => restoreCoupon(b.dataset.restore));
+  });
+  card.querySelectorAll('[data-edit]').forEach(b => {
+    b.addEventListener('click', () => editCoupon(b.dataset.edit));
+  });
+  card.querySelectorAll('[data-delete]').forEach(b => {
+    b.addEventListener('click', () => deleteCoupon(b.dataset.delete));
+  });
+
+  return card;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// ===== リスト表示 =====
+function renderActiveList() {
+  const list = document.getElementById('activeList');
+  list.innerHTML = '';
+
+  let items = coupons.filter(c => !c.used && daysLeft(c.due) >= 0);
+  if (activeCategory !== 'all') items = items.filter(c => c.category === activeCategory);
+
+  // 期限近い順
+  items.sort((a, b) => (a.due || '9999').localeCompare(b.due || '9999'));
+
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="emoji">🎟️</span>使えるクーポンはまだないよ<br><small>「追加」タブから登録しよう</small></div>`;
+    return;
+  }
+  items.forEach(c => list.appendChild(renderCouponCard(c)));
+}
+
+function renderArchiveList() {
+  const list = document.getElementById('archiveList');
+  list.innerHTML = '';
+
+  let items = coupons.filter(c => c.used || daysLeft(c.due) < 0);
+  if (activeArchiveCategory !== 'all') items = items.filter(c => c.category === activeArchiveCategory);
+
+  // 新しい順
+  items.sort((a, b) => (b.usedAt || b.due || '').localeCompare(a.usedAt || a.due || ''));
+
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="emoji">📂</span>履歴はまだないよ</div>`;
+    return;
+  }
+  items.forEach(c => list.appendChild(renderCouponCard(c)));
+}
+
+// ===== アラートバナー =====
+function renderAlertBanner() {
+  const banner = document.getElementById('alertBanner');
+  const urgent = coupons.filter(c => !c.used && daysLeft(c.due) >= 0 && daysLeft(c.due) <= 1);
+  const warn = coupons.filter(c => !c.used && daysLeft(c.due) >= 2 && daysLeft(c.due) <= 3);
+
+  if (urgent.length > 0) {
+    banner.classList.add('show');
+    banner.classList.remove('warning');
+    document.getElementById('alertTitle').textContent = `🚨 期限まじか！(${urgent.length}件)`;
+    const names = urgent.map(c => {
+      const diff = daysLeft(c.due);
+      const when = diff === 0 ? '今日' : '明日';
+      return `・${c.name}（${when}まで）`;
+    }).join('<br>');
+    document.getElementById('alertItems').innerHTML = names;
+  } else if (warn.length > 0) {
+    banner.classList.add('show');
+    banner.classList.add('warning');
+    document.getElementById('alertTitle').textContent = `⚠️ 期限が近いよ (${warn.length}件)`;
+    const names = warn.map(c => `・${c.name}（あと${daysLeft(c.due)}日）`).join('<br>');
+    document.getElementById('alertItems').innerHTML = names;
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+// ===== カテゴリ管理表示 =====
+function renderCategoryManagement() {
+  const list = document.getElementById('catList');
+  list.innerHTML = '';
+  categories.forEach((cat, idx) => {
+    const tag = document.createElement('div');
+    tag.className = 'cat-tag';
+    tag.innerHTML = `<span></span><button class="del-cat" data-idx="${idx}">×</button>`;
+    tag.querySelector('span').textContent = cat;
+    list.appendChild(tag);
+  });
+  list.querySelectorAll('.del-cat').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = +btn.dataset.idx;
+      const cat = categories[idx];
+      const using = coupons.filter(c => c.category === cat).length;
+      if (using > 0) {
+        if (!confirm(`「${cat}」を使ってるクーポンが${using}件あるよ。\n削除すると「その他」に移動されるけど大丈夫？`)) return;
+        coupons.forEach(c => { if (c.category === cat) c.category = 'その他'; });
+        saveCoupons();
+      } else {
+        if (!confirm(`「${cat}」を削除する？`)) return;
+      }
+      categories.splice(idx, 1);
+      if (!categories.includes('その他')) categories.push('その他');
+      saveCategories();
+      renderAll();
+    });
+  });
+
+  // カテゴリ選択肢の更新
+  const sel = document.getElementById('inputCategory');
+  const currentVal = sel.value;
+  sel.innerHTML = categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  if (currentVal && categories.includes(currentVal)) sel.value = currentVal;
+}
+
+document.getElementById('addCatBtn').addEventListener('click', () => {
+  const input = document.getElementById('newCatInput');
+  const name = input.value.trim();
+  if (!name) return;
+  if (categories.includes(name)) {
+    alert('もう同じ名前があるよ');
+    return;
+  }
+  categories.push(name);
+  saveCategories();
+  input.value = '';
+  renderAll();
+});
+document.getElementById('newCatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('addCatBtn').click();
+});
+
+// ===== 追加/編集 =====
+function clearForm() {
+  document.getElementById('editId').value = '';
+  document.getElementById('inputName').value = '';
+  document.getElementById('inputShop').value = '';
+  document.getElementById('inputDue').value = '';
+  document.getElementById('inputDetail').value = '';
+  document.getElementById('inputMemo').value = '';
+  document.getElementById('formTitle').textContent = '🎟️ クーポンを追加';
+}
+
+document.getElementById('cancelBtn').addEventListener('click', clearForm);
+
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const name = document.getElementById('inputName').value.trim();
+  const due = document.getElementById('inputDue').value;
+  if (!name) { alert('クーポン名を入れてね'); return; }
+  if (!due) { alert('期限を入れてね'); return; }
+
+  const editId = document.getElementById('editId').value;
+  const data = {
+    id: editId || ('c' + Date.now()),
+    category: document.getElementById('inputCategory').value,
+    name: name,
+    shop: document.getElementById('inputShop').value.trim(),
+    due: due,
+    detail: document.getElementById('inputDetail').value.trim(),
+    memo: document.getElementById('inputMemo').value.trim(),
+    used: false,
+    createdAt: editId ? coupons.find(c => c.id === editId).createdAt : Date.now()
+  };
+
+  if (editId) {
+    const idx = coupons.findIndex(c => c.id === editId);
+    if (idx >= 0) coupons[idx] = { ...coupons[idx], ...data };
+  } else {
+    coupons.push(data);
+  }
+  saveCoupons();
+  clearForm();
+  // 使えるタブへ
+  document.querySelector('.tab[data-tab="active"]').click();
+});
+
+function editCoupon(id) {
+  const c = coupons.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('editId').value = id;
+  document.getElementById('inputCategory').value = c.category || 'その他';
+  document.getElementById('inputName').value = c.name || '';
+  document.getElementById('inputShop').value = c.shop || '';
+  document.getElementById('inputDue').value = c.due || '';
+  document.getElementById('inputDetail').value = c.detail || '';
+  document.getElementById('inputMemo').value = c.memo || '';
+  document.getElementById('formTitle').textContent = '✏️ クーポンを編集';
+  document.querySelector('.tab[data-tab="add"]').click();
+}
+
+function useCoupon(id) {
+  const c = coupons.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm(`「${c.name}」を使用済みにする？`)) return;
+  c.used = true;
+  c.usedAt = new Date().toISOString();
+  saveCoupons();
+  renderAll();
+}
+
+function restoreCoupon(id) {
+  const c = coupons.find(x => x.id === id);
+  if (!c) return;
+  c.used = false;
+  delete c.usedAt;
+  saveCoupons();
+  renderAll();
+}
+
+function deleteCoupon(id) {
+  const c = coupons.find(x => x.id === id);
+  if (!c) return;
+  if (!confirm(`「${c.name}」を削除する？\n（戻せないよ）`)) return;
+  coupons = coupons.filter(x => x.id !== id);
+  saveCoupons();
+  renderAll();
+}
+
+// ===== ポップアップ =====
+function checkAndShowPopup() {
+  const today = new Date().toISOString().split('T')[0];
+  const lastShown = localStorage.getItem(POPUP_SHOWN_KEY);
+  if (lastShown === today) return; // 1日1回まで
+
+  const urgent = coupons.filter(c => !c.used && daysLeft(c.due) >= 0 && daysLeft(c.due) <= 1);
+  if (urgent.length === 0) return;
+
+  const list = document.getElementById('popupList');
+  list.innerHTML = '';
+  urgent.forEach(c => {
+    const diff = daysLeft(c.due);
+    const when = diff === 0 ? '今日まで' : '明日まで';
+    const item = document.createElement('div');
+    item.className = 'popup-item';
+    item.innerHTML = `<div class="nm"></div><div class="due">⏰ ${when}（${c.due}）</div>`;
+    item.querySelector('.nm').textContent = c.name + (c.shop ? ` @ ${c.shop}` : '');
+    list.appendChild(item);
+  });
+  document.getElementById('popupOverlay').classList.add('show');
+  localStorage.setItem(POPUP_SHOWN_KEY, today);
+}
+
+document.getElementById('popupCloseBtn').addEventListener('click', () => {
+  document.getElementById('popupOverlay').classList.remove('show');
+});
+
+// ===== タブ切替 =====
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    renderAll();
+  });
+});
+
+// ===== 全部レンダリング =====
+function renderAll() {
+  renderCategoryFilter('categoryFilter', false);
+  renderCategoryFilter('archiveCategoryFilter', true);
+  renderActiveList();
+  renderArchiveList();
+  renderAlertBanner();
+  renderCategoryManagement();
+}
+
+// ===== 初期化 =====
+renderAll();
+checkAndShowPopup();
+</script>
+</body>
+</html>

@@ -3,31 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>fuuka.log — トップ</title>
+<title>KFK</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&family=Cormorant+Garamond:ital,wght@1,500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&family=Outfit:wght@300;500;700;900&display=swap');
 
   :root {
-    --bg-1: #fff4d6;
-    --bg-2: #ffd6e7;
-    --bg-3: #c8e7ff;
-    --ink: #3d2e2a;
-    --ink-soft: #8a6f6a;
-    --accent: #ff7a9e;
-    --accent-2: #ffb84d;
+    --bg-top: #8fc4f5;
+    --bg-mid: #b3d8f5;
+    --bg-bot: #cce5f5;
+    --ink: #2a3850;
+    --ink-soft: #6a7890;
+    --ink-mid: #4a5870;
+    --pink: #ff9ec7;
+    --pink-soft: #ffd0e0;
+    --purple: #b09cff;
+    --purple-soft: #d0c5ff;
+    --cyan: #7fd9ff;
+    --cyan-soft: #b0e8ff;
+    --amber: #ffd97a;
+    --amber-soft: #ffe9b0;
+    --danger: #ff7a7a;
     --success: #7fc99e;
-    --danger: #ff6b6b;
-    --warning: #ffaa44;
-    --card: #fffaf0;
-    --shadow: 0 4px 0 rgba(61, 46, 42, 0.15);
+    --glass: rgba(255, 255, 255, 0.7);
+    --glass-soft: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.9);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    font-family: 'Zen Maru Gothic', sans-serif;
+    font-family: 'Outfit', 'Zen Maru Gothic', sans-serif;
     color: var(--ink);
-    background: linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 50%, var(--bg-3) 100%);
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 60%, var(--bg-bot) 100%);
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -37,10 +44,11 @@
     position: fixed;
     inset: 0;
     background-image:
-      radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.4) 1px, transparent 2px),
-      radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.3) 1px, transparent 2px),
-      radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.4) 1px, transparent 2px);
-    background-size: 100px 100px, 150px 150px, 80px 80px;
+      radial-gradient(circle at 15% 25%, rgba(255,255,255,0.5) 1px, transparent 2px),
+      radial-gradient(circle at 65% 60%, rgba(255,255,255,0.4) 1px, transparent 2px),
+      radial-gradient(circle at 35% 85%, rgba(255,255,255,0.5) 1px, transparent 2px),
+      radial-gradient(circle at 85% 30%, rgba(255,255,255,0.4) 1px, transparent 2px);
+    background-size: 80px 80px, 120px 120px, 60px 60px, 100px 100px;
     pointer-events: none;
     z-index: 0;
   }
@@ -50,82 +58,174 @@
     z-index: 1;
     max-width: 480px;
     margin: 0 auto;
-    padding: 20px 16px 100px;
+    padding: 16px 16px 60px;
   }
 
-  /* ===== ブランド ===== */
-  .brand {
-    text-align: center;
-    padding: 20px 0 12px;
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 2px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 5;
   }
-  .brand-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 38px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    line-height: 1;
-  }
-  .brand-name .dot { color: var(--accent); }
-  .brand-tagline {
+  .top-mini {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 18px;
+    padding: 6px 14px;
     font-size: 11px;
-    color: var(--ink-soft);
-    letter-spacing: 0.25em;
-    margin-top: 6px;
-  }
-  .brand-date {
-    margin-top: 14px;
-    font-size: 13px;
-    color: var(--ink-soft);
-    font-weight: 500;
-  }
-  .brand-date b {
     color: var(--ink);
     font-weight: 700;
+    border: 1px solid var(--glass-border);
+    text-decoration: none;
+    letter-spacing: 0.1em;
   }
 
-  /* ===== ニュース（起床ゲーム連携） ===== */
-  .news {
+  .deco {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .deco-heart    { top: 90px; left: -15px; width: 80px; height: 80px; }
+  .deco-cart     { top: 70px; right: -10px; width: 90px; height: 90px; }
+  .deco-arrow    { top: 320px; left: -20px; width: 80px; height: 80px; transform: rotate(-15deg); }
+  .deco-gift     { top: 290px; right: -15px; width: 80px; height: 80px; transform: rotate(15deg); }
+  .deco-conf-1   { top: 200px; left: 28%; font-size: 18px; color: var(--pink); }
+  .deco-conf-2   { top: 250px; right: 25%; font-size: 16px; color: var(--purple); }
+  .deco-conf-3   { top: 410px; left: 18%; font-size: 14px; color: var(--cyan); }
+  .deco-conf-4   { top: 470px; right: 8%; font-size: 12px; color: var(--amber); }
+  .holo-shape {
     display: block;
-    background: var(--card);
-    border: 3px solid var(--ink);
-    border-radius: 20px;
-    padding: 12px 14px;
-    box-shadow: var(--shadow);
-    margin-bottom: 16px;
-    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 6px 8px rgba(42, 56, 80, 0.15));
+  }
+
+  .hero {
+    text-align: center;
+    padding: 36px 0 28px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 96px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 0.9;
+    background: linear-gradient(180deg, var(--ink) 0%, var(--ink-mid) 50%, var(--ink-soft) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 6px 0 rgba(255,255,255,0.4));
+  }
+  .hero-title .dot {
+    background: linear-gradient(180deg, #ff7eb3, #ff9cc7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    color: var(--ink-mid);
+    letter-spacing: 0.4em;
+    margin-top: 14px;
+    font-weight: 500;
+  }
+  .hero-date {
+    margin-top: 16px;
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 22px;
+    font-size: 13px;
     color: var(--ink);
+    font-weight: 700;
+    border: 1.5px solid var(--glass-border);
+    box-shadow: 0 4px 12px rgba(42, 56, 80, 0.05);
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+
+  .glass {
+    background: linear-gradient(135deg, var(--glass), var(--glass-soft));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 20px rgba(42, 56, 80, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .glass::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 70%);
+    pointer-events: none;
+  }
+
+  .news-card {
+    padding: 14px 16px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 12px;
+    text-decoration: none;
+    color: var(--ink);
     transition: transform 0.1s;
+    position: relative;
+    z-index: 2;
   }
-  .news:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(61, 46, 42, 0.15); }
+  .news-card:active { transform: scale(0.98); }
 
-  .news-mochi {
+  .news-mochi-wrap {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--pink-soft));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      inset 0 -8px 12px rgba(255,255,255,0.5),
+      inset 0 4px 8px rgba(255,158,199,0.4),
+      0 6px 14px rgba(255,158,199,0.4);
     flex-shrink: 0;
-    width: 56px;
-    height: 56px;
+    overflow: hidden;
   }
-  .news-body { flex: 1; min-width: 0; }
+  .news-mochi-wrap svg { width: 46px; height: 46px; }
+  .news-content { flex: 1; min-width: 0; }
   .news-label {
+    font-family: 'Outfit', sans-serif;
     font-size: 10px;
     color: var(--ink-soft);
     letter-spacing: 0.15em;
+    font-weight: 700;
     margin-bottom: 2px;
   }
   .news-text {
     font-size: 14px;
     font-weight: 700;
+    color: var(--ink);
     line-height: 1.3;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
   .news-text.success { color: var(--success); }
   .news-text.danger { color: var(--danger); }
-  .news-text.warn { color: var(--warning); }
+  .news-text.warn { color: #c08000; }
   .news-meta {
     font-size: 11px;
     color: var(--ink-soft);
     margin-top: 3px;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
   .news-arrow {
     font-size: 18px;
@@ -133,124 +233,446 @@
     flex-shrink: 0;
   }
 
-  /* ===== セクション見出し ===== */
+  /* Brain Dump */
+  .brain-dump {
+    padding: 16px;
+    margin-top: 14px;
+    margin-bottom: 14px;
+    position: relative;
+    z-index: 2;
+    border: 2px solid rgba(255, 158, 199, 0.5);
+    box-shadow: 0 8px 24px rgba(255, 158, 199, 0.15);
+  }
+  .brain-dump::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 4px;
+    background: linear-gradient(90deg, var(--pink), var(--purple), var(--cyan), var(--amber));
+    border-radius: 24px 24px 0 0;
+  }
+  .brain-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    gap: 10px;
+  }
+  .brain-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    color: var(--ink-soft);
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .brain-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--ink);
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .brain-stats {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .brain-stat {
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 4px 8px;
+    border-radius: 10px;
+    min-width: 28px;
+    text-align: center;
+  }
+  .brain-stat.now { background: linear-gradient(135deg, #ff9e9e, #ffc0c0); color: #c04040; }
+  .brain-stat.later { background: linear-gradient(135deg, var(--purple-soft), #e0d8ff); color: #6850c0; }
+  .brain-stat.forget { background: linear-gradient(135deg, #d0e8d0, #e8f0e0); color: #5a8060; }
+
+  .brain-input-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .brain-input-row textarea {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    border: 1.5px solid var(--glass-border);
+    border-radius: 14px;
+    background: white;
+    outline: none;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 50px;
+    line-height: 1.5;
+  }
+  .brain-input-row textarea:focus { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,158,199,0.2); }
+  .brain-add-btn {
+    padding: 0 18px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--pink), #ff7eb3);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255,158,199,0.5), inset 0 -3px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+  }
+  .brain-add-btn:active { transform: translateY(2px); }
+
+  .brain-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.4);
+    padding: 3px;
+    border-radius: 12px;
+    border: 1.5px solid var(--glass-border);
+  }
+  .brain-tab {
+    flex: 1;
+    padding: 7px 4px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .brain-tab.active { background: var(--ink); color: white; }
+  .brain-tab .cnt {
+    font-family: 'Outfit', sans-serif;
+    font-size: 10px;
+    background: rgba(255,255,255,0.3);
+    padding: 1px 6px;
+    border-radius: 8px;
+    min-width: 16px;
+  }
+  .brain-tab.active .cnt { background: rgba(255,255,255,0.2); }
+
+  .brain-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 40px;
+  }
+  .brain-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.75);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    transition: all 0.15s;
+  }
+  .brain-item.now {
+    background: linear-gradient(135deg, rgba(255,200,200,0.7), rgba(255,220,200,0.5));
+    border-color: rgba(255, 100, 100, 0.5);
+  }
+  .brain-item.later {
+    background: linear-gradient(135deg, rgba(208,200,255,0.5), rgba(224,216,255,0.3));
+  }
+  .brain-item.forget {
+    background: rgba(208,232,208,0.4);
+    opacity: 0.8;
+  }
+  .brain-item-body {
+    flex: 1;
+    min-width: 0;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--ink);
+    word-wrap: break-word;
+  }
+  .brain-item-meta {
+    font-size: 10px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .brain-item-actions {
+    display: flex;
+    gap: 3px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 100px;
+  }
+  .brain-action {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--ink-soft);
+    border-radius: 8px;
+    padding: 3px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--ink);
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .brain-action.todo { background: linear-gradient(135deg, var(--pink), #ff7eb3); color: white; border-color: transparent; }
+  .brain-action.del { color: var(--danger); }
+  .brain-action:active { transform: scale(0.95); }
+
+  .brain-empty {
+    text-align: center;
+    padding: 20px 10px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .brain-empty .emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+
+  .coupon-alert {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    text-decoration: none;
+    color: var(--ink);
+    border: 2px solid var(--danger);
+    background: linear-gradient(135deg, rgba(255,200,200,0.7), rgba(255,220,200,0.5));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 22px;
+    box-shadow: 0 6px 20px rgba(255, 122, 122, 0.3);
+    animation: pulseGlow 2.5s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 6px 20px rgba(255, 122, 122, 0.3); }
+    50% { box-shadow: 0 6px 28px rgba(255, 122, 122, 0.5); }
+  }
+  .coupon-alert.show { display: flex; }
+  .coupon-alert-icon {
+    width: 50px; height: 50px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff9e9e, #ffc8b0);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: inset 0 -4px 6px rgba(255,255,255,0.4);
+    flex-shrink: 0;
+  }
+  .coupon-alert-body { flex: 1; min-width: 0; }
+  .coupon-alert-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--danger);
+    margin-bottom: 2px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .coupon-alert-text {
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.4;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+
   .section-title {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 4px;
-    margin-bottom: 10px;
+    margin: 22px 0 12px;
+    position: relative;
+    z-index: 2;
   }
   .section-title h2 {
-    font-size: 15px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
     font-weight: 900;
-    letter-spacing: 0.05em;
+    color: var(--ink);
+    letter-spacing: -0.01em;
   }
   .section-title .count {
+    font-family: 'Outfit', sans-serif;
     font-size: 11px;
     color: var(--ink-soft);
-    background: rgba(255, 255, 255, 0.6);
-    border: 2px solid var(--ink);
-    padding: 2px 10px;
-    border-radius: 12px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 4px 12px;
+    border-radius: 14px;
     font-weight: 700;
   }
 
-  /* ===== TODO ===== */
-  .todo-card {
-    background: var(--card);
-    border: 3px solid var(--ink);
-    border-radius: 24px;
-    padding: 16px;
-    box-shadow: var(--shadow);
-    margin-bottom: 24px;
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    position: relative;
+    z-index: 2;
+  }
+  .feature-card {
+    display: block;
+    padding: 16px 14px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:active { transform: scale(0.97); }
+  .feature-card.coming { opacity: 0.6; cursor: default; }
+
+  .feature-number {
+    position: absolute;
+    top: 12px; right: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 700;
+    letter-spacing: 0.1em;
   }
 
-  .todo-input-row {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 12px;
-  }
-
-  /* クイック追加 */
-  .quick-add {
-    background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
-    border: 2px solid var(--ink);
+  .feature-icon-wrap {
+    width: 50px; height: 50px;
     border-radius: 16px;
-    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 26px;
+  }
+  .feature-icon-wrap.c1 { background: linear-gradient(135deg, var(--pink), var(--pink-soft)); box-shadow: 0 4px 10px rgba(255,158,199,0.4), inset 0 -4px 6px rgba(255,255,255,0.4); }
+  .feature-icon-wrap.c2 { background: linear-gradient(135deg, var(--purple), var(--purple-soft)); box-shadow: 0 4px 10px rgba(176,156,255,0.4), inset 0 -4px 6px rgba(255,255,255,0.4); }
+  .feature-icon-wrap.c3 { background: linear-gradient(135deg, var(--cyan), var(--cyan-soft)); box-shadow: 0 4px 10px rgba(127,217,255,0.4), inset 0 -4px 6px rgba(255,255,255,0.4); }
+  .feature-icon-wrap.c4 { background: linear-gradient(135deg, var(--amber), var(--amber-soft)); box-shadow: 0 4px 10px rgba(255,217,122,0.4), inset 0 -4px 6px rgba(255,255,255,0.4); }
+  .feature-icon-wrap.c5 { background: linear-gradient(135deg, #b0d8b0, #d0e8d0); box-shadow: 0 4px 10px rgba(176,216,176,0.4), inset 0 -4px 6px rgba(255,255,255,0.4); }
+  .feature-icon-wrap.c6 { background: linear-gradient(135deg, #ffb0a0, #ffd0c0); box-shadow: 0 4px 10px rgba(255,176,160,0.4), inset 0 -4px 6px rgba(255,255,255,0.4); }
+  .feature-name {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 2px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .feature-desc {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+
+  /* TODO */
+  .todo-card { padding: 16px; }
+  .quick-add {
+    background: linear-gradient(135deg, var(--pink-soft), rgba(255, 217, 122, 0.4));
+    border: 1.5px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 12px;
     margin-bottom: 10px;
   }
   .quick-add-label {
-    font-size: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 11px;
     font-weight: 700;
     color: var(--ink);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
   }
-  .quick-add-row {
-    display: flex;
-    gap: 6px;
-  }
+  .quick-add-row { display: flex; gap: 6px; }
   .quick-add-row input {
-    flex: 1;
-    min-width: 0;
+    flex: 1; min-width: 0;
     padding: 10px 12px;
-    font-family: inherit;
+    font-family: 'Zen Maru Gothic', sans-serif;
     font-size: 14px;
-    border: 2px solid var(--ink);
+    border: 1.5px solid var(--glass-border);
     border-radius: 12px;
-    background: white;
+    background: rgba(255,255,255,0.8);
     outline: none;
+    color: var(--ink);
   }
+  .quick-add-row input:focus { background: white; border-color: var(--pink); }
   .quick-add-hint {
     font-size: 10px;
     color: var(--ink-soft);
     margin-top: 6px;
-    letter-spacing: 0.03em;
+    line-height: 1.4;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
-  .quick-add-hint.preview {
-    color: var(--success);
-    font-weight: 700;
-  }
-  .quick-add-hint.error {
-    color: var(--danger);
-    font-weight: 700;
-  }
+  .quick-add-hint.preview { color: var(--success); font-weight: 700; }
+  .quick-add-hint.error { color: var(--danger); font-weight: 700; }
 
-  /* 折りたたみ */
-  details {
-    margin-bottom: 10px;
+  .todo-add-btn {
+    padding: 10px 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--pink), #ff7eb3);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255,158,199,0.5), inset 0 -3px 4px rgba(0,0,0,0.1);
+    flex-shrink: 0;
   }
+  .todo-add-btn:active { transform: translateY(2px); }
+
+  details { margin-bottom: 10px; }
   details summary {
     cursor: pointer;
     padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.6);
-    border: 2px solid var(--ink);
+    background: rgba(255, 255, 255, 0.5);
+    border: 1.5px solid var(--glass-border);
     border-radius: 12px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--ink-soft);
     list-style: none;
     user-select: none;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
   details summary::-webkit-details-marker { display: none; }
-  details summary::after {
-    content: ' ▼';
-    font-size: 10px;
-  }
+  details summary::after { content: ' ▼'; font-size: 9px; }
   details[open] summary::after { content: ' ▲'; }
   details[open] summary { margin-bottom: 8px; color: var(--ink); }
 
-  details .todo-input-row { margin-bottom: 0; }
-
+  .todo-input-row { display: flex; gap: 6px; }
+  .todo-input-row input[type="text"] {
+    flex: 1; min-width: 0;
+    padding: 10px 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.8);
+    outline: none;
+    color: var(--ink);
+  }
+  .todo-input-row input[type="date"] {
+    width: 110px;
+    padding: 10px 6px;
+    font-family: inherit;
+    font-size: 13px;
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.8);
+    outline: none;
+  }
   .json-import textarea {
     width: 100%;
     min-height: 80px;
     padding: 10px;
     font-family: 'DotGothic16', monospace;
     font-size: 12px;
-    border: 2px solid var(--ink);
+    border: 1.5px solid var(--glass-border);
     border-radius: 12px;
-    background: white;
+    background: rgba(255,255,255,0.8);
     outline: none;
     resize: vertical;
     margin-bottom: 8px;
@@ -258,73 +680,40 @@
   .json-import-btn {
     width: 100%;
     padding: 10px;
-    font-family: inherit;
+    font-family: 'Outfit', sans-serif;
     font-size: 13px;
     font-weight: 900;
-    background: var(--accent-2);
-    color: white;
-    border: 2px solid var(--ink);
+    background: linear-gradient(135deg, var(--amber), #ffc94d);
+    color: var(--ink);
+    border: none;
     border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 3px 0 var(--ink);
+    box-shadow: 0 4px 10px rgba(255,201,77,0.4), inset 0 -3px 4px rgba(0,0,0,0.08);
   }
-  .json-import-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
+  .json-import-btn:active { transform: translateY(2px); }
   .json-result {
     margin-top: 8px;
     font-size: 12px;
     text-align: center;
     min-height: 16px;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
   .json-result.success { color: var(--success); font-weight: 700; }
   .json-result.error { color: var(--danger); font-weight: 700; }
-  .todo-input-row input[type="text"] {
-    flex: 1;
-    min-width: 0;
-    padding: 10px 12px;
-    font-family: inherit;
-    font-size: 14px;
-    border: 2px solid var(--ink);
-    border-radius: 12px;
-    background: white;
-    outline: none;
-  }
-  .todo-input-row input[type="date"] {
-    width: 105px;
-    padding: 10px 6px;
-    font-family: inherit;
-    font-size: 13px;
-    border: 2px solid var(--ink);
-    border-radius: 12px;
-    background: white;
-    outline: none;
-  }
-  .todo-add-btn {
-    padding: 10px 14px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 900;
-    background: var(--accent);
-    color: white;
-    border: 2px solid var(--ink);
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 var(--ink);
-    flex-shrink: 0;
-  }
-  .todo-add-btn:active { transform: translateY(3px); box-shadow: 0 0 0 var(--ink); }
 
   .todo-filters {
     display: flex;
     gap: 4px;
-    margin-bottom: 12px;
-    background: rgba(255, 244, 214, 0.5);
+    margin: 10px 0;
+    background: rgba(255,255,255,0.4);
     padding: 3px;
     border-radius: 12px;
+    border: 1.5px solid var(--glass-border);
   }
   .todo-filter {
     flex: 1;
-    padding: 6px;
-    font-family: inherit;
+    padding: 7px;
+    font-family: 'Outfit', sans-serif;
     font-size: 12px;
     font-weight: 700;
     background: transparent;
@@ -333,29 +722,26 @@
     cursor: pointer;
     color: var(--ink-soft);
   }
-  .todo-filter.active {
-    background: var(--ink);
-    color: white;
-  }
+  .todo-filter.active { background: var(--ink); color: white; }
 
-  .todo-list {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
+  .todo-list { display: flex; flex-direction: column; gap: 6px; }
   .todo-item {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px;
-    background: white;
-    border: 2px solid var(--ink);
+    background: rgba(255, 255, 255, 0.7);
+    border: 1.5px solid var(--glass-border);
     border-radius: 14px;
-    transition: all 0.15s;
   }
-  .todo-item.urgent { background: #ffe5e5; border-color: var(--danger); }
-  .todo-item.warn { background: #fff5e0; border-color: var(--warning); }
+  .todo-item.urgent {
+    background: linear-gradient(135deg, rgba(255,200,200,0.6), rgba(255,220,200,0.4));
+    border-color: var(--danger);
+  }
+  .todo-item.warn {
+    background: linear-gradient(135deg, rgba(255,217,122,0.4), rgba(255,233,176,0.3));
+    border-color: #c08000;
+  }
   .todo-item.done {
     background: rgba(127, 201, 158, 0.15);
     opacity: 0.7;
@@ -365,53 +751,39 @@
     color: var(--ink-soft);
   }
   .todo-item.overdue {
-    background: rgba(255, 107, 107, 0.2);
+    background: linear-gradient(135deg, rgba(255,107,107,0.25), rgba(255,107,107,0.1));
     border-color: var(--danger);
   }
-
   .todo-check {
-    width: 24px;
-    height: 24px;
-    border: 2.5px solid var(--ink);
+    width: 24px; height: 24px;
+    border: 2px solid var(--ink);
     border-radius: 8px;
     background: white;
     cursor: pointer;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 16px;
     color: var(--success);
     font-weight: 900;
-    transition: all 0.15s;
   }
-  .todo-check.checked {
-    background: var(--success);
-    color: white;
-  }
-
-  .todo-body {
-    flex: 1;
-    min-width: 0;
-  }
+  .todo-check.checked { background: var(--success); color: white; border-color: var(--success); }
+  .todo-body { flex: 1; min-width: 0; }
   .todo-text {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.3;
     word-wrap: break-word;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
   .todo-due {
     font-size: 11px;
     color: var(--ink-soft);
     margin-top: 2px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
   .todo-due.urgent { color: var(--danger); font-weight: 700; }
-  .todo-due.warn { color: var(--warning); font-weight: 700; }
+  .todo-due.warn { color: #c08000; font-weight: 700; }
   .todo-due.overdue { color: var(--danger); font-weight: 700; }
-
   .todo-delete {
     background: transparent;
     border: none;
@@ -421,147 +793,407 @@
     padding: 2px 6px;
     flex-shrink: 0;
   }
-  .todo-delete:active { color: var(--danger); }
-
   .todo-empty {
     text-align: center;
     padding: 30px 16px;
     color: var(--ink-soft);
     font-size: 13px;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
-  .todo-empty .emoji {
-    font-size: 32px;
-    display: block;
-    margin-bottom: 8px;
-  }
+  .todo-empty .emoji { font-size: 32px; display: block; margin-bottom: 8px; }
 
-  /* ===== 機能カードグリッド ===== */
-  .feature-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+  /* データ管理 */
+  .data-manage {
+    margin-top: 18px;
     margin-bottom: 16px;
-  }
-
-  .feature-card {
-    display: block;
-    background: var(--card);
-    border: 3px solid var(--ink);
-    border-radius: 20px;
-    padding: 16px 14px;
-    box-shadow: var(--shadow);
-    text-decoration: none;
-    color: var(--ink);
-    transition: transform 0.1s;
     position: relative;
-    overflow: hidden;
+    z-index: 2;
   }
-  .feature-card:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(61, 46, 42, 0.15); }
-
-  .feature-card.coming {
-    background: rgba(255, 255, 255, 0.4);
-    border-style: dashed;
-    border-color: var(--ink-soft);
-    cursor: default;
+  .data-manage summary {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, var(--glass), var(--glass-soft));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 18px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+    box-shadow: 0 6px 16px rgba(42,56,80,0.06);
+    color: var(--ink);
+    letter-spacing: 0.02em;
   }
-  .feature-card.coming .feature-emoji { opacity: 0.4; }
-  .feature-card.coming .feature-name { color: var(--ink-soft); }
-
-  .feature-emoji {
-    font-size: 32px;
-    line-height: 1;
-    margin-bottom: 6px;
-    display: block;
+  .data-manage summary::-webkit-details-marker { display: none; }
+  .data-manage summary::after { content: ' ▼'; font-size: 10px; float: right; }
+  .data-manage[open] summary::after { content: ' ▲'; }
+  .data-manage-inner { padding: 16px; margin-top: 8px; }
+  .data-desc {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
   }
-  .feature-name {
+  .data-row {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed rgba(106,120,144,0.3);
+  }
+  .data-row:last-of-type { border-bottom: none; }
+  .data-label {
+    font-family: 'Outfit', sans-serif;
     font-size: 14px;
     font-weight: 900;
     margin-bottom: 2px;
   }
-  .feature-desc {
-    font-size: 10px;
+  .data-sub {
+    font-size: 11px;
     color: var(--ink-soft);
-    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    font-family: 'Zen Maru Gothic', sans-serif;
   }
-  .feature-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-size: 9px;
-    padding: 2px 6px;
-    background: var(--accent);
-    color: white;
-    border-radius: 8px;
+  .data-btn {
+    width: 100%;
+    padding: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    background: rgba(255,255,255,0.8);
+    color: var(--ink);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(42,56,80,0.06);
   }
-  .feature-badge.soon {
-    background: var(--ink-soft);
+  .data-btn.primary {
+    background: linear-gradient(135deg, var(--pink), #ff7eb3);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(255,158,199,0.4), inset 0 -3px 4px rgba(0,0,0,0.08);
+  }
+  .data-filename {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+    text-align: center;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .data-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 700;
+    display: none;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .data-result.show { display: block; }
+  .data-result.success { background: rgba(127, 201, 158, 0.2); color: #2a8055; border: 1.5px solid var(--success); }
+  .data-result.error { background: rgba(255, 122, 122, 0.15); color: var(--danger); border: 1.5px solid var(--danger); }
+  .data-result.warn { background: rgba(255, 217, 122, 0.3); color: #806000; border: 1.5px solid #c08000; }
+
+  .restore-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(42, 56, 80, 0.5);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+  .restore-modal-overlay.show { display: flex; }
+  .restore-modal {
+    background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+    backdrop-filter: blur(20px);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 20px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(42,56,80,0.3);
+  }
+  .restore-modal h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+  .restore-modal .preview {
+    background: rgba(255,255,255,0.6);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 12px 0;
+    font-size: 12px;
+    line-height: 1.6;
+    font-family: 'Zen Maru Gothic', sans-serif;
+  }
+  .restore-modal .preview .head { font-weight: 700; margin-bottom: 4px; color: var(--ink); }
+  .restore-modal .preview .item { color: var(--ink-soft); padding-left: 4px; }
+  .restore-modal .choice-btns { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .restore-modal .choice-btn {
+    padding: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    border: 1.5px solid var(--glass-border);
+    border-radius: 14px;
+    cursor: pointer;
+    text-align: left;
+    background: rgba(255,255,255,0.7);
+    color: var(--ink);
+  }
+  .restore-modal .choice-btn.merge { border-color: var(--success); }
+  .restore-modal .choice-btn.replace { border-color: var(--danger); }
+  .restore-modal .choice-btn .btn-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .restore-modal .choice-btn .btn-desc {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  .restore-modal .cancel {
+    background: var(--ink);
+    color: white;
+    border: none;
+    width: 100%;
+    padding: 11px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
   }
 
-  /* ===== フッター ===== */
   .footer {
     text-align: center;
     margin-top: 30px;
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Outfit', sans-serif;
     font-style: italic;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--ink-soft);
-    letter-spacing: 0.1em;
+    letter-spacing: 0.15em;
+    position: relative;
+    z-index: 2;
   }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ブランド -->
-  <div class="brand">
-    <div class="brand-name">fuuka<span class="dot">.</span>log</div>
-    <div class="brand-tagline">A QUIET RECORD OF DAYS</div>
-    <div class="brand-date" id="brandDate">--</div>
+  <div class="deco deco-heart">
+    <svg class="holo-shape" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="holoHeart" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffb0d8"/>
+          <stop offset="30%" stop-color="#c8b0ff"/>
+          <stop offset="60%" stop-color="#80d8ff"/>
+          <stop offset="100%" stop-color="#b0ffd8"/>
+        </linearGradient>
+        <radialGradient id="holoHeartShine" cx="35%" cy="30%">
+          <stop offset="0%" stop-color="white" stop-opacity="0.9"/>
+          <stop offset="50%" stop-color="white" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="white" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <path d="M50,82 C30,65 10,50 10,32 C10,18 22,10 32,10 C40,10 46,15 50,22 C54,15 60,10 68,10 C78,10 90,18 90,32 C90,50 70,65 50,82 Z" fill="url(#holoHeart)"/>
+      <path d="M50,82 C30,65 10,50 10,32 C10,18 22,10 32,10 C40,10 46,15 50,22 C54,15 60,10 68,10 C78,10 90,18 90,32 C90,50 70,65 50,82 Z" fill="url(#holoHeartShine)"/>
+    </svg>
   </div>
 
-  <!-- もちまるのニュース（起床ゲーム連携） -->
-  <a class="news" href="wakeup-game.html" id="newsCard">
-    <svg class="news-mochi" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-      <ellipse cx="100" cy="180" rx="55" ry="5" fill="rgba(61,46,42,0.15)"/>
-      <ellipse cx="100" cy="115" rx="70" ry="60" fill="#fffaf0" stroke="#3d2e2a" stroke-width="4"/>
-      <ellipse cx="55" cy="125" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
-      <ellipse cx="145" cy="125" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
-      <g id="newsMochiEyes">
-        <circle cx="78" cy="105" r="5" fill="#3d2e2a"/>
-        <circle cx="122" cy="105" r="5" fill="#3d2e2a"/>
+  <div class="deco deco-cart">
+    <svg class="holo-shape" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="holoCart" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c8b0ff"/>
+          <stop offset="50%" stop-color="#80d8ff"/>
+          <stop offset="100%" stop-color="#b0ffd8"/>
+        </linearGradient>
+      </defs>
+      <g stroke="url(#holoCart)" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M20,30 L30,30 L40,65 L80,65 L88,40 L35,40"/>
+        <circle cx="45" cy="78" r="5"/>
+        <circle cx="72" cy="78" r="5"/>
+        <line x1="48" y1="48" x2="48" y2="58"/>
+        <line x1="58" y1="48" x2="58" y2="58"/>
+        <line x1="68" y1="48" x2="68" y2="58"/>
       </g>
-      <path id="newsMochiMouth" d="M 92 130 Q 100 138 108 130" stroke="#3d2e2a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <circle cx="100" cy="52" r="4" fill="#3d2e2a"/>
-      <path d="M 100 56 L 100 62" stroke="#3d2e2a" stroke-width="2" stroke-linecap="round"/>
     </svg>
-    <div class="news-body">
-      <div class="news-label">🌅 もちまるから</div>
+  </div>
+
+  <div class="deco deco-arrow">
+    <svg class="holo-shape" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="holoArrow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c8b0ff"/>
+          <stop offset="100%" stop-color="#80d8ff"/>
+        </linearGradient>
+      </defs>
+      <path d="M20,50 L50,20 L50,38 L80,38 L80,62 L50,62 L50,80 Z" fill="url(#holoArrow)"/>
+      <path d="M20,50 L50,20 L50,38 L80,38" stroke="white" stroke-width="1.5" fill="none" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <div class="deco deco-gift">
+    <svg class="holo-shape" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="holoGift" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#ffd0e8"/>
+          <stop offset="50%" stop-color="#b0ffd8"/>
+          <stop offset="100%" stop-color="#80d8ff"/>
+        </linearGradient>
+      </defs>
+      <rect x="20" y="35" width="60" height="50" fill="url(#holoGift)" rx="4"/>
+      <rect x="20" y="35" width="60" height="12" fill="white" opacity="0.4" rx="4"/>
+      <rect x="45" y="35" width="10" height="50" fill="white" opacity="0.5"/>
+      <path d="M30,35 C30,20 40,15 50,30 C60,15 70,20 70,35" stroke="url(#holoGift)" stroke-width="6" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="deco deco-conf-1">✦</div>
+  <div class="deco deco-conf-2">✧</div>
+  <div class="deco deco-conf-3">◆</div>
+  <div class="deco deco-conf-4">✦</div>
+
+  <div class="top-row">
+    <div class="top-mini">⚙ KFK</div>
+    <div class="top-mini" id="topDate">--</div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-title">KFK</div>
+    <div class="hero-sub">A QUIET RECORD OF DAYS</div>
+    <div class="hero-date" id="heroDate">--</div>
+  </div>
+
+  <a class="news-card glass" href="wakeup-game.html" id="newsCard">
+    <div class="news-mochi-wrap">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="180" rx="55" ry="5" fill="rgba(42,56,80,0.15)"/>
+        <ellipse cx="100" cy="115" rx="70" ry="60" fill="#fffaf0" stroke="#2a3850" stroke-width="4"/>
+        <ellipse cx="55" cy="125" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
+        <ellipse cx="145" cy="125" rx="11" ry="8" fill="#ffb3c6" opacity="0.7"/>
+        <g id="newsMochiEyes">
+          <circle cx="78" cy="105" r="5" fill="#2a3850"/>
+          <circle cx="122" cy="105" r="5" fill="#2a3850"/>
+        </g>
+        <path id="newsMochiMouth" d="M 92 130 Q 100 138 108 130" stroke="#2a3850" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="100" cy="52" r="4" fill="#2a3850"/>
+        <path d="M 100 56 L 100 62" stroke="#2a3850" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="news-content">
+      <div class="news-label">MOCHIMARU</div>
       <div class="news-text" id="newsText">おはよう、ふうかちゃん</div>
       <div class="news-meta" id="newsMeta">--</div>
     </div>
     <div class="news-arrow">›</div>
   </a>
 
-  <!-- TODO -->
+  <!-- Brain Dump: 頭の中の散らかり整理 -->
+  <div class="brain-dump glass">
+    <div class="brain-head">
+      <div>
+        <div class="brain-label">BRAIN DUMP</div>
+        <div class="brain-title">頭の中を出しちゃおう 🧠</div>
+      </div>
+      <div class="brain-stats">
+        <span class="brain-stat now" id="brainStatNow">0</span>
+        <span class="brain-stat later" id="brainStatLater">0</span>
+        <span class="brain-stat forget" id="brainStatForget">0</span>
+      </div>
+    </div>
+    <div class="brain-input-row">
+      <textarea id="brainInput" placeholder="気になってること、なんでも書き出して..." rows="2" maxlength="500"></textarea>
+      <button class="brain-add-btn" id="brainAddBtn">出す</button>
+    </div>
+    <div class="brain-tabs">
+      <button class="brain-tab active" data-bt="now">🔥 今すぐ<span class="cnt" id="cntNow">0</span></button>
+      <button class="brain-tab" data-bt="later">💭 あとで<span class="cnt" id="cntLater">0</span></button>
+      <button class="brain-tab" data-bt="forget">🍃 忘れる<span class="cnt" id="cntForget">0</span></button>
+    </div>
+    <div class="brain-list" id="brainList"></div>
+  </div>
+
+  <a class="coupon-alert" href="coupon.html" id="couponAlert">
+    <div class="coupon-alert-icon">🎟️</div>
+    <div class="coupon-alert-body">
+      <div class="coupon-alert-title" id="couponAlertTitle"></div>
+      <div class="coupon-alert-text" id="couponAlertText"></div>
+    </div>
+    <div class="news-arrow">›</div>
+  </a>
+
+  <div class="section-title"><h2>FEATURES</h2></div>
+
+  <div class="feature-grid">
+    <a class="feature-card glass" href="wakeup-game.html">
+      <span class="feature-number">01</span>
+      <div class="feature-icon-wrap c1">🌅</div>
+      <div class="feature-name">起床ゲーム</div>
+      <div class="feature-desc">もちまると朝活</div>
+    </a>
+    <a class="feature-card glass" href="diary.html">
+      <span class="feature-number">02</span>
+      <div class="feature-icon-wrap c2">📔</div>
+      <div class="feature-name">日記</div>
+      <div class="feature-desc">よかったこと3つ</div>
+    </a>
+    <a class="feature-card glass" href="pochi.html">
+      <span class="feature-number">03</span>
+      <div class="feature-icon-wrap c3">🐣</div>
+      <div class="feature-name">ぽち</div>
+      <div class="feature-desc">話して育てる</div>
+    </a>
+    <a class="feature-card glass" href="coupon.html">
+      <span class="feature-number">04</span>
+      <div class="feature-icon-wrap c4">🎟️</div>
+      <div class="feature-name">クーポン</div>
+      <div class="feature-desc">紙クーポン管理</div>
+    </a>
+    <div class="feature-card glass coming">
+      <span class="feature-number">05</span>
+      <div class="feature-icon-wrap c5">📸</div>
+      <div class="feature-name">サーキット写真</div>
+      <div class="feature-desc">COMING SOON</div>
+    </div>
+    <div class="feature-card glass coming">
+      <span class="feature-number">06</span>
+      <div class="feature-icon-wrap c6">📚</div>
+      <div class="feature-name">読書ログ</div>
+      <div class="feature-desc">COMING SOON</div>
+    </div>
+  </div>
+
   <div class="section-title">
-    <h2>📝 TODO</h2>
+    <h2>TODO</h2>
     <div class="count" id="todoCount">0件</div>
   </div>
 
-  <div class="todo-card">
-    <!-- クイック追加（自然文） -->
+  <div class="todo-card glass">
     <div class="quick-add">
       <div class="quick-add-label">✨ さくっと追加</div>
       <div class="quick-add-row">
-        <input type="text" id="quickInput" placeholder="例: 10時までに犬の散歩、明日 美容院" maxlength="200">
+        <input type="text" id="quickInput" placeholder="例: 10時までに犬の散歩" maxlength="200">
         <button class="todo-add-btn" id="quickAddBtn">＋</button>
       </div>
       <div class="quick-add-hint" id="quickHint">時刻・日付を自動で読み取るよ</div>
     </div>
 
-    <!-- 詳細追加（折りたたみ） -->
     <details class="manual-add">
       <summary>📝 詳細を指定して追加</summary>
       <div class="todo-input-row">
@@ -571,7 +1203,6 @@
       </div>
     </details>
 
-    <!-- JSONインポート -->
     <details class="json-import">
       <summary>📥 Claudeから貼り付けて一括追加</summary>
       <textarea id="jsonInput" placeholder='Claudeに「TODOにこれ追加して」って頼んで、出てきたJSONをここに貼って "追加" を押す'></textarea>
@@ -588,73 +1219,283 @@
     <div class="todo-list" id="todoList"></div>
   </div>
 
-  <!-- 機能カード -->
-  <div class="section-title">
-    <h2>🌟 機能</h2>
-  </div>
-
-  <div class="feature-grid">
-    <a class="feature-card" href="wakeup-game.html">
-      <span class="feature-badge">PLAY</span>
-      <span class="feature-emoji">🌅</span>
-      <div class="feature-name">起床ゲーム</div>
-      <div class="feature-desc">もちまると朝活</div>
-    </a>
-
-    <a class="feature-card" href="diary.html">
-      <span class="feature-badge">WRITE</span>
-      <span class="feature-emoji">📔</span>
-      <div class="feature-name">日記</div>
-      <div class="feature-desc">今日よかったこと3つ</div>
-    </a>
-
-    <div class="feature-card coming">
-      <span class="feature-badge soon">SOON</span>
-      <span class="feature-emoji">📸</span>
-      <div class="feature-name">サーキット写真</div>
-      <div class="feature-desc">準備中</div>
+  <details class="data-manage">
+    <summary>⚙️ DATA — バックアップと復元</summary>
+    <div class="data-manage-inner glass">
+      <div class="data-desc">
+        記録は普段あなたのブラウザに保存されてるよ。<br>
+        万が一に備えて、ときどきバックアップしておくと安心。
+      </div>
+      <div class="data-row">
+        <div class="data-label">📥 EXPORT</div>
+        <div class="data-sub">全データをファイルとして保存</div>
+        <button class="data-btn primary" id="exportBtn">バックアップを書き出す</button>
+      </div>
+      <div class="data-row">
+        <div class="data-label">📤 IMPORT</div>
+        <div class="data-sub">バックアップファイルから復元</div>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none;">
+        <button class="data-btn" id="importBtn">ファイルを選ぶ</button>
+        <div class="data-filename" id="importFilename"></div>
+      </div>
+      <div class="data-result" id="dataResult"></div>
     </div>
+  </details>
 
-    <div class="feature-card coming">
-      <span class="feature-badge soon">SOON</span>
-      <span class="feature-emoji">📚</span>
-      <div class="feature-name">読書ログ</div>
-      <div class="feature-desc">準備中</div>
-    </div>
-  </div>
-
-  <div class="footer">— fuuka.log —</div>
+  <div class="footer">— KFK —</div>
 
 </div>
 
+<div class="restore-modal-overlay" id="restoreModal">
+  <div class="restore-modal">
+    <h3>📤 バックアップから復元</h3>
+    <div style="font-size:12px;color:var(--ink-soft);line-height:1.5;font-family:'Zen Maru Gothic',sans-serif;">ファイルの内容を確認してね：</div>
+    <div class="preview" id="restorePreview"></div>
+    <div style="font-size:12px;color:var(--ink-soft);font-family:'Zen Maru Gothic',sans-serif;">どう復元する？</div>
+    <div class="choice-btns">
+      <button class="choice-btn merge" id="mergeBtn">
+        <span class="btn-label">🔀 マージ（おすすめ）</span>
+        <span class="btn-desc">既存のデータに、バックアップを足す。</span>
+      </button>
+      <button class="choice-btn replace" id="replaceBtn">
+        <span class="btn-label">🔄 全部置き換え</span>
+        <span class="btn-desc">今のデータを全部捨ててバックアップの内容にする。</span>
+      </button>
+    </div>
+    <button class="cancel" id="cancelRestore">キャンセル</button>
+  </div>
+</div>
+
 <script>
-// ===== TODO データ =====
 const TODO_KEY = 'fuukalog_todos_v1';
 const WAKEUP_KEY = 'mochimaru_wakeup_v2';
+const BRAIN_KEY = 'fuukalog_brain_v1';
+
+// ===== Brain Dump =====
+function loadBrain() {
+  try { return JSON.parse(localStorage.getItem(BRAIN_KEY) || '[]'); }
+  catch (e) { return []; }
+}
+function saveBrain() { localStorage.setItem(BRAIN_KEY, JSON.stringify(brainItems)); }
+
+let brainItems = loadBrain();
+let currentBrainTab = 'now';
+
+// 7日経過した「忘れる」を自動削除
+function cleanOldForgets() {
+  const now = Date.now();
+  const sevenDays = 7 * 24 * 60 * 60 * 1000;
+  const before = brainItems.length;
+  brainItems = brainItems.filter(b => {
+    if (b.category === 'forget' && (now - b.createdAt) > sevenDays) return false;
+    return true;
+  });
+  if (brainItems.length !== before) saveBrain();
+}
+
+// 自動分類
+function autoClassify(text) {
+  const lower = text.toLowerCase();
+  // 「今すぐ」キーワード
+  if (/今日中|きょうじゅう|今すぐ|いますぐ|急いで|いそいで|至急|しきゅう|やばい|忘れる前|まずい/.test(text)) {
+    return 'now';
+  }
+  // 「忘れる」キーワード
+  if (/いつか|気が向いたら|きがむいたら|そのうち|たぶん|もしかして|メモ|めも|思い出|ふと|なんとなく/.test(text)) {
+    return 'forget';
+  }
+  return 'later';
+}
+
+// レンダリング
+function renderBrain() {
+  cleanOldForgets();
+  const list = document.getElementById('brainList');
+
+  const filtered = brainItems.filter(b => b.category === currentBrainTab);
+  filtered.sort((a, b) => b.createdAt - a.createdAt);
+
+  // カウント
+  const counts = { now: 0, later: 0, forget: 0 };
+  brainItems.forEach(b => counts[b.category] = (counts[b.category] || 0) + 1);
+  document.getElementById('cntNow').textContent = counts.now;
+  document.getElementById('cntLater').textContent = counts.later;
+  document.getElementById('cntForget').textContent = counts.forget;
+  document.getElementById('brainStatNow').textContent = counts.now;
+  document.getElementById('brainStatLater').textContent = counts.later;
+  document.getElementById('brainStatForget').textContent = counts.forget;
+
+  if (filtered.length === 0) {
+    const msgs = {
+      now: '<span class="emoji">✨</span>今すぐやることなし',
+      later: '<span class="emoji">💭</span>「あとで」は空っぽ',
+      forget: '<span class="emoji">🍃</span>気にせず流していこう'
+    };
+    list.innerHTML = `<div class="brain-empty">${msgs[currentBrainTab]}</div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  filtered.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'brain-item ' + item.category;
+    const ageMs = Date.now() - item.createdAt;
+    const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+    const ageHours = Math.floor(ageMs / (1000 * 60 * 60));
+    let ageText = '';
+    if (ageHours < 1) ageText = 'さっき';
+    else if (ageHours < 24) ageText = `${ageHours}時間前`;
+    else ageText = `${ageDays}日前`;
+
+    let forgetWarn = '';
+    if (item.category === 'forget') {
+      const daysLeft = 7 - ageDays;
+      if (daysLeft <= 2) forgetWarn = ` ／ ${daysLeft}日後に消える`;
+    }
+
+    let actions = '';
+    if (item.category === 'now') {
+      actions = `
+        <button class="brain-action todo" data-todo="${item.id}">→TODO</button>
+        <button class="brain-action" data-move="later" data-id="${item.id}">あとで</button>
+        <button class="brain-action del" data-del="${item.id}">×</button>
+      `;
+    } else if (item.category === 'later') {
+      actions = `
+        <button class="brain-action" data-move="now" data-id="${item.id}">→今すぐ</button>
+        <button class="brain-action" data-move="forget" data-id="${item.id}">忘れる</button>
+        <button class="brain-action del" data-del="${item.id}">×</button>
+      `;
+    } else {
+      actions = `
+        <button class="brain-action" data-move="later" data-id="${item.id}">→あとで</button>
+        <button class="brain-action del" data-del="${item.id}">×</button>
+      `;
+    }
+
+    el.innerHTML = `
+      <div class="brain-item-body">
+        <div class="brain-item-text"></div>
+        <div class="brain-item-meta">${ageText}${forgetWarn}</div>
+      </div>
+      <div class="brain-item-actions">${actions}</div>
+    `;
+    el.querySelector('.brain-item-text').textContent = item.text;
+    list.appendChild(el);
+  });
+
+  // イベント
+  list.querySelectorAll('[data-todo]').forEach(b => {
+    b.addEventListener('click', () => promoteToTodo(b.dataset.todo));
+  });
+  list.querySelectorAll('[data-move]').forEach(b => {
+    b.addEventListener('click', () => moveBrainItem(b.dataset.id, b.dataset.move));
+  });
+  list.querySelectorAll('[data-del]').forEach(b => {
+    b.addEventListener('click', () => deleteBrainItem(b.dataset.del));
+  });
+}
+
+// 追加
+function addBrain() {
+  const input = document.getElementById('brainInput');
+  const text = input.value.trim();
+  if (!text) { input.focus(); return; }
+  const category = autoClassify(text);
+  brainItems.push({
+    id: 'br' + Date.now() + Math.random().toString(36).slice(2, 6),
+    text: text,
+    category: category,
+    createdAt: Date.now()
+  });
+  input.value = '';
+  saveBrain();
+  // 分類されたタブに自動切り替え（書いた内容がすぐ見える）
+  currentBrainTab = category;
+  document.querySelectorAll('.brain-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.bt === category);
+  });
+  renderBrain();
+}
+
+// 分類変更
+function moveBrainItem(id, newCat) {
+  const item = brainItems.find(b => b.id === id);
+  if (!item) return;
+  item.category = newCat;
+  if (newCat === 'forget') item.createdAt = Date.now(); // forget期間リセット
+  saveBrain();
+  renderBrain();
+}
+
+// 削除
+function deleteBrainItem(id) {
+  brainItems = brainItems.filter(b => b.id !== id);
+  saveBrain();
+  renderBrain();
+}
+
+// TODO昇格
+function promoteToTodo(id) {
+  const item = brainItems.find(b => b.id === id);
+  if (!item) return;
+  // TODOに追加
+  todos.push({
+    id: 't' + Date.now(),
+    text: item.text,
+    due: null,
+    done: false,
+    createdAt: Date.now()
+  });
+  saveTodos();
+  // brain dumpから削除
+  brainItems = brainItems.filter(b => b.id !== id);
+  saveBrain();
+  renderBrain();
+  renderTodos();
+  // フィードバック
+  const btn = event.target;
+  const original = btn.textContent;
+  btn.textContent = '✓';
+  setTimeout(() => { btn.textContent = original; }, 800);
+}
+
+// イベント
+document.getElementById('brainAddBtn').addEventListener('click', addBrain);
+document.getElementById('brainInput').addEventListener('keydown', e => {
+  // Cmd/Ctrl + Enter で送信
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+    e.preventDefault();
+    addBrain();
+  }
+});
+document.querySelectorAll('.brain-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.brain-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentBrainTab = tab.dataset.bt;
+    renderBrain();
+  });
+});
 
 function loadTodos() {
-  try {
-    const s = localStorage.getItem(TODO_KEY);
-    return s ? JSON.parse(s) : [];
-  } catch (e) { return []; }
+  try { const s = localStorage.getItem(TODO_KEY); return s ? JSON.parse(s) : []; }
+  catch (e) { return []; }
 }
 function saveTodos() { localStorage.setItem(TODO_KEY, JSON.stringify(todos)); }
 
 let todos = loadTodos();
 let currentFilter = 'active';
 
-// ===== 日付ユーティリティ =====
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function daysBetween(dateStr) {
   if (!dateStr) return null;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const due = new Date(dateStr);
-  due.setHours(0, 0, 0, 0);
-  return Math.round((due - today) / (1000 * 60 * 60 * 24));
+  const today = new Date(); today.setHours(0,0,0,0);
+  const due = new Date(dateStr); due.setHours(0,0,0,0);
+  return Math.round((due - today) / (1000*60*60*24));
 }
 function formatDue(dateStr) {
   const diff = daysBetween(dateStr);
@@ -676,22 +1517,18 @@ function dueClass(dateStr, done) {
   return '';
 }
 
-// ===== ブランドの日付 =====
-function renderBrandDate() {
+function renderDates() {
   const d = new Date();
-  const DAYS = ['日', '月', '火', '水', '木', '金', '土'];
-  document.getElementById('brandDate').innerHTML =
-    `<b>${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日</b>（${DAYS[d.getDay()]}）`;
+  const DAYS = ['日','月','火','水','木','金','土'];
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('heroDate').textContent =
+    `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${DAYS[d.getDay()]}）`;
+  document.getElementById('topDate').textContent = `${MONTHS[d.getMonth()]} ${d.getDate()}`;
 }
 
-// ===== 起床ゲーム連携：もちまるニュース =====
 function renderNews() {
   let wakeupState = null;
-  try {
-    const s = localStorage.getItem(WAKEUP_KEY);
-    if (s) wakeupState = JSON.parse(s);
-  } catch (e) {}
-
+  try { const s = localStorage.getItem(WAKEUP_KEY); if (s) wakeupState = JSON.parse(s); } catch (e) {}
   const textEl = document.getElementById('newsText');
   const metaEl = document.getElementById('newsMeta');
   const eyesEl = document.getElementById('newsMochiEyes');
@@ -703,8 +1540,6 @@ function renderNews() {
     metaEl.textContent = '起床ゲームを始めよう →';
     return;
   }
-
-  // 今日のシフトを取得
   const today = todayKey();
   const todayShiftId = (wakeupState.calendar || {})[today];
   const todayShift = todayShiftId ? (wakeupState.shifts || []).find(s => s.id === todayShiftId) : null;
@@ -712,71 +1547,72 @@ function renderNews() {
   if (wakeupState.todayCleared) {
     textEl.textContent = `🎉 ${wakeupState.streak}日連続クリア中！`;
     textEl.className = 'news-text success';
-    metaEl.textContent = `最高記録: ${wakeupState.best}日 ／ 今日の起床OK`;
-    // にっこり
-    eyesEl.innerHTML = `
-      <path d="M 70 105 Q 78 98 86 105" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M 114 105 Q 122 98 130 105" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
-    `;
+    metaEl.textContent = `最高 ${wakeupState.best}日 ／ 今日OK`;
+    eyesEl.innerHTML = `<path d="M 70 105 Q 78 98 86 105" stroke="#2a3850" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M 114 105 Q 122 98 130 105" stroke="#2a3850" stroke-width="3" fill="none" stroke-linecap="round"/>`;
     mouthEl.setAttribute('d', 'M 88 130 Q 100 142 112 130');
-    mouthEl.setAttribute('fill', '#ff7a9e');
+    mouthEl.setAttribute('fill', '#ff9ec7');
   } else if (wakeupState.todayFailed) {
     textEl.textContent = '...今日はアウトだったね';
     textEl.className = 'news-text danger';
-    metaEl.textContent = `連続記録リセット ／ 明日また頑張ろう`;
-    // しょんぼり
-    eyesEl.innerHTML = `
-      <path d="M 70 108 Q 78 115 86 108" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M 114 108 Q 122 115 130 108" stroke="#3d2e2a" stroke-width="3" fill="none" stroke-linecap="round"/>
-    `;
+    metaEl.textContent = '連続記録リセット ／ 明日また頑張ろう';
+    eyesEl.innerHTML = `<path d="M 70 108 Q 78 115 86 108" stroke="#2a3850" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M 114 108 Q 122 115 130 108" stroke="#2a3850" stroke-width="3" fill="none" stroke-linecap="round"/>`;
     mouthEl.setAttribute('d', 'M 92 135 Q 100 128 108 135');
     mouthEl.setAttribute('fill', 'none');
   } else if (todayShift) {
     textEl.textContent = `今日のアラーム ${todayShift.alarmTime}`;
     textEl.className = 'news-text warn';
     metaEl.textContent = `${todayShift.name} ／ 期限 ${todayShift.deadline} ／ 連続${wakeupState.streak}日`;
-    // ふつう
-    eyesEl.innerHTML = `
-      <circle cx="78" cy="105" r="5" fill="#3d2e2a"/>
-      <circle cx="122" cy="105" r="5" fill="#3d2e2a"/>
-    `;
+    eyesEl.innerHTML = `<circle cx="78" cy="105" r="5" fill="#2a3850"/><circle cx="122" cy="105" r="5" fill="#2a3850"/>`;
     mouthEl.setAttribute('d', 'M 92 130 Q 100 138 108 130');
     mouthEl.setAttribute('fill', 'none');
   } else {
-    textEl.textContent = `おはよう、ふうかちゃん`;
+    textEl.textContent = 'おはよう、ふうかちゃん';
     textEl.className = 'news-text';
-    metaEl.textContent = `今日はシフト未設定 ／ 連続${wakeupState.streak}日`;
-    eyesEl.innerHTML = `
-      <circle cx="78" cy="105" r="5" fill="#3d2e2a"/>
-      <circle cx="122" cy="105" r="5" fill="#3d2e2a"/>
-    `;
+    metaEl.textContent = `今日はシフト未設定 ／ 連続${wakeupState.streak || 0}日`;
+    eyesEl.innerHTML = `<circle cx="78" cy="105" r="5" fill="#2a3850"/><circle cx="122" cy="105" r="5" fill="#2a3850"/>`;
     mouthEl.setAttribute('d', 'M 92 130 Q 100 138 108 130');
     mouthEl.setAttribute('fill', 'none');
   }
 }
 
-// ===== TODO レンダリング =====
+function renderCouponAlert() {
+  const alertEl = document.getElementById('couponAlert');
+  let coupons = [];
+  try { coupons = JSON.parse(localStorage.getItem('fuukalog_coupons_v1') || '[]'); } catch (e) {}
+  const today = new Date(); today.setHours(0,0,0,0);
+  const urgent = coupons.filter(c => {
+    if (c.used || !c.due) return false;
+    const due = new Date(c.due); due.setHours(0,0,0,0);
+    const diff = Math.round((due - today) / (1000*60*60*24));
+    return diff >= 0 && diff <= 3;
+  });
+  if (urgent.length === 0) { alertEl.classList.remove('show'); return; }
+  alertEl.classList.add('show');
+  document.getElementById('couponAlertTitle').textContent = `期限が近いクーポンが${urgent.length}件！`;
+  const names = urgent.slice(0,2).map(c => {
+    const due = new Date(c.due); due.setHours(0,0,0,0);
+    const diff = Math.round((due - today) / (1000*60*60*24));
+    const when = diff === 0 ? '今日' : diff === 1 ? '明日' : `${diff}日後`;
+    return `${c.name}（${when}）`;
+  });
+  let text = names.join(' / ');
+  if (urgent.length > 2) text += ` 他${urgent.length - 2}件`;
+  document.getElementById('couponAlertText').textContent = text;
+}
+
 function renderTodos() {
   const list = document.getElementById('todoList');
-
-  // フィルタ
   let filtered = todos;
   if (currentFilter === 'active') filtered = todos.filter(t => !t.done);
   else if (currentFilter === 'done') filtered = todos.filter(t => t.done);
-
-  // ソート: 未完了は期限近い順（期限なしは後ろ）→ 完了は後ろ
   filtered.sort((a, b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
     if (a.due && b.due) return a.due.localeCompare(b.due);
-    if (a.due) return -1;
-    if (b.due) return 1;
+    if (a.due) return -1; if (b.due) return 1;
     return b.createdAt - a.createdAt;
   });
-
-  // 件数
   const active = todos.filter(t => !t.done).length;
   document.getElementById('todoCount').textContent = `${active}件`;
-
   if (filtered.length === 0) {
     let msg = '';
     if (currentFilter === 'active') msg = '<span class="emoji">✨</span>やることなし！すごい';
@@ -785,7 +1621,6 @@ function renderTodos() {
     list.innerHTML = `<div class="todo-empty">${msg}</div>`;
     return;
   }
-
   list.innerHTML = '';
   filtered.forEach(todo => {
     const item = document.createElement('div');
@@ -797,319 +1632,163 @@ function renderTodos() {
         <div class="todo-text"></div>
         ${todo.due ? `<div class="todo-due ${dc}">📅 ${formatDue(todo.due)}</div>` : ''}
       </div>
-      <button class="todo-delete" data-del="${todo.id}">✕</button>
-    `;
+      <button class="todo-delete" data-del="${todo.id}">✕</button>`;
     item.querySelector('.todo-text').textContent = todo.text;
     list.appendChild(item);
   });
-
-  // イベント
-  list.querySelectorAll('.todo-check').forEach(el => {
-    el.addEventListener('click', () => toggleTodo(el.dataset.id));
-  });
-  list.querySelectorAll('.todo-delete').forEach(el => {
-    el.addEventListener('click', () => deleteTodo(el.dataset.del));
-  });
+  list.querySelectorAll('.todo-check').forEach(el => el.addEventListener('click', () => toggleTodo(el.dataset.id)));
+  list.querySelectorAll('.todo-delete').forEach(el => el.addEventListener('click', () => deleteTodo(el.dataset.del)));
 }
 
-// ===== TODO 操作 =====
 function addTodo() {
   const input = document.getElementById('todoInput');
   const dueInput = document.getElementById('todoDueInput');
   const text = input.value.trim();
-  if (!text) {
-    input.focus();
-    return;
-  }
-  todos.push({
-    id: 't' + Date.now(),
-    text: text,
-    due: dueInput.value || null,
-    done: false,
-    createdAt: Date.now()
-  });
-  input.value = '';
-  dueInput.value = '';
-  saveTodos();
-  renderTodos();
+  if (!text) { input.focus(); return; }
+  todos.push({ id: 't' + Date.now(), text, due: dueInput.value || null, done: false, createdAt: Date.now() });
+  input.value = ''; dueInput.value = '';
+  saveTodos(); renderTodos();
 }
 
-// ===== 自然文解析 =====
 function parseNaturalText(rawText) {
   let text = rawText.trim();
   if (!text) return null;
-
   const now = new Date();
-  let dueDate = null;
-  let dueTime = null;
-  let hint = [];
-
-  // ----- 日付の解析 -----
+  let dueDate = null, dueTime = null, hint = [];
   const datePatterns = [
-    { re: /今日/, offset: 0 },
-    { re: /きょう/, offset: 0 },
-    { re: /明日/, offset: 1 },
-    { re: /あした/, offset: 1 },
-    { re: /あす/, offset: 1 },
-    { re: /明後日/, offset: 2 },
-    { re: /あさって/, offset: 2 },
+    { re: /今日/, offset: 0 }, { re: /きょう/, offset: 0 },
+    { re: /明日/, offset: 1 }, { re: /あした/, offset: 1 }, { re: /あす/, offset: 1 },
+    { re: /明後日/, offset: 2 }, { re: /あさって/, offset: 2 },
     { re: /(\d+)日後/, offsetFromMatch: m => +m[1] },
-    { re: /来週末/, offset: null, special: 'nextWeekend' },
-    { re: /今週末/, offset: null, special: 'thisWeekend' },
-    { re: /来週月曜/, offset: null, special: 'nextDow', dow: 1 },
-    { re: /来週火曜/, offset: null, special: 'nextDow', dow: 2 },
-    { re: /来週水曜/, offset: null, special: 'nextDow', dow: 3 },
-    { re: /来週木曜/, offset: null, special: 'nextDow', dow: 4 },
-    { re: /来週金曜/, offset: null, special: 'nextDow', dow: 5 },
-    { re: /来週土曜/, offset: null, special: 'nextDow', dow: 6 },
-    { re: /来週日曜/, offset: null, special: 'nextDow', dow: 0 },
-    { re: /来週/, offset: 7 },
-    { re: /来月/, offset: null, special: 'nextMonth' },
+    { re: /来週末/, special: 'nextWeekend' }, { re: /今週末/, special: 'thisWeekend' },
+    { re: /来週月曜/, special: 'nextDow', dow: 1 }, { re: /来週火曜/, special: 'nextDow', dow: 2 },
+    { re: /来週水曜/, special: 'nextDow', dow: 3 }, { re: /来週木曜/, special: 'nextDow', dow: 4 },
+    { re: /来週金曜/, special: 'nextDow', dow: 5 }, { re: /来週土曜/, special: 'nextDow', dow: 6 },
+    { re: /来週日曜/, special: 'nextDow', dow: 0 },
+    { re: /来週/, offset: 7 }, { re: /来月/, special: 'nextMonth' },
   ];
-
   for (const p of datePatterns) {
     const m = text.match(p.re);
     if (m) {
-      let target = new Date(now);
-      target.setHours(0, 0, 0, 0);
-      if (p.special === 'nextMonth') {
-        target.setMonth(target.getMonth() + 1);
-      } else if (p.special === 'thisWeekend') {
-        const dow = target.getDay();
-        target.setDate(target.getDate() + ((6 - dow + 7) % 7 || 7));
-      } else if (p.special === 'nextWeekend') {
-        const dow = target.getDay();
-        target.setDate(target.getDate() + ((6 - dow + 7) % 7 || 7) + 7);
-      } else if (p.special === 'nextDow') {
-        const dow = target.getDay();
-        let diff = (p.dow - dow + 7) % 7;
-        if (diff === 0) diff = 7;
-        target.setDate(target.getDate() + diff + 7);
-      } else {
-        const offset = p.offsetFromMatch ? p.offsetFromMatch(m) : p.offset;
-        target.setDate(target.getDate() + offset);
-      }
+      let target = new Date(now); target.setHours(0,0,0,0);
+      if (p.special === 'nextMonth') target.setMonth(target.getMonth() + 1);
+      else if (p.special === 'thisWeekend') { const dow = target.getDay(); target.setDate(target.getDate() + ((6 - dow + 7) % 7 || 7)); }
+      else if (p.special === 'nextWeekend') { const dow = target.getDay(); target.setDate(target.getDate() + ((6 - dow + 7) % 7 || 7) + 7); }
+      else if (p.special === 'nextDow') { const dow = target.getDay(); let diff = (p.dow - dow + 7) % 7; if (diff === 0) diff = 7; target.setDate(target.getDate() + diff + 7); }
+      else { const offset = p.offsetFromMatch ? p.offsetFromMatch(m) : p.offset; target.setDate(target.getDate() + offset); }
       dueDate = target;
       text = text.replace(p.re, '').trim();
       hint.push(formatDateForHint(dueDate));
       break;
     }
   }
-
-  // 5/20, 5月20日 みたいな絶対日付
   if (!dueDate) {
     const m1 = text.match(/(\d{1,2})[\/月](\d{1,2})日?/);
     if (m1) {
-      const month = +m1[1] - 1;
-      const day = +m1[2];
-      const target = new Date(now.getFullYear(), month, day);
-      target.setHours(0, 0, 0, 0);
-      // 過去日付なら来年扱い
-      const todayMidnight = new Date(now);
-      todayMidnight.setHours(0, 0, 0, 0);
+      const month = +m1[1] - 1, day = +m1[2];
+      const target = new Date(now.getFullYear(), month, day); target.setHours(0,0,0,0);
+      const todayMidnight = new Date(now); todayMidnight.setHours(0,0,0,0);
       if (target < todayMidnight) target.setFullYear(target.getFullYear() + 1);
       dueDate = target;
       text = text.replace(m1[0], '').trim();
       hint.push(formatDateForHint(dueDate));
     }
   }
-
-  // ----- 時刻の解析 -----
-  // 14時半, 10時30分, 10時, 10:00, 10:30
   let timeMatch = text.match(/(\d{1,2})時(半|(\d{1,2})分?)?/);
   if (timeMatch) {
-    const h = +timeMatch[1];
-    let m = 0;
-    if (timeMatch[2] === '半') m = 30;
-    else if (timeMatch[3]) m = +timeMatch[3];
+    const h = +timeMatch[1]; let m = 0;
+    if (timeMatch[2] === '半') m = 30; else if (timeMatch[3]) m = +timeMatch[3];
     dueTime = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
     text = text.replace(timeMatch[0], '').trim();
     hint.push(dueTime);
   } else {
     timeMatch = text.match(/(\d{1,2}):(\d{2})/);
     if (timeMatch) {
-      const h = +timeMatch[1];
-      const m = +timeMatch[2];
+      const h = +timeMatch[1], m = +timeMatch[2];
       dueTime = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
       text = text.replace(timeMatch[0], '').trim();
       hint.push(dueTime);
     }
   }
-
-  // 時刻だけ指定されてて日付がない → 今日扱い
-  if (dueTime && !dueDate) {
-    dueDate = new Date(now);
-    dueDate.setHours(0, 0, 0, 0);
-    hint.unshift('今日');
-  }
-
-  // ----- ノイズワードの除去 -----
+  if (dueTime && !dueDate) { dueDate = new Date(now); dueDate.setHours(0,0,0,0); hint.unshift('今日'); }
   text = text.replace(/までに?/g, '').replace(/まで/g, '').trim();
   text = text.replace(/^[、,。\s]+/, '').replace(/[、,。\s]+$/, '').trim();
-
   if (!text) return null;
-
-  return {
-    text: text,
-    due: dueDate ? dateKey2(dueDate) : null,
-    time: dueTime,
-    hint: hint.join(' ')
-  };
+  return { text, due: dueDate ? dateKey2(dueDate) : null, time: dueTime, hint: hint.join(' ') };
 }
-
-function dateKey2(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
+function dateKey2(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function formatDateForHint(d) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const diff = Math.round((d - today) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return '今日';
-  if (diff === 1) return '明日';
-  if (diff === 2) return '明後日';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((d - today) / (1000*60*60*24));
+  if (diff === 0) return '今日'; if (diff === 1) return '明日'; if (diff === 2) return '明後日';
   return `${d.getMonth()+1}/${d.getDate()}`;
 }
 
-// クイック追加プレビュー
 const quickInput = document.getElementById('quickInput');
 const quickHint = document.getElementById('quickHint');
-
 quickInput.addEventListener('input', () => {
   const val = quickInput.value.trim();
-  if (!val) {
-    quickHint.textContent = '時刻・日付を自動で読み取るよ';
-    quickHint.className = 'quick-add-hint';
-    return;
-  }
+  if (!val) { quickHint.textContent = '時刻・日付を自動で読み取るよ'; quickHint.className = 'quick-add-hint'; return; }
   const parsed = parseNaturalText(val);
   if (parsed && (parsed.due || parsed.time)) {
     let preview = `→「${parsed.text}」`;
     if (parsed.hint) preview += ` ／ 期限: ${parsed.hint}`;
-    quickHint.textContent = preview;
-    quickHint.className = 'quick-add-hint preview';
-  } else if (parsed) {
-    quickHint.textContent = `→「${parsed.text}」（期限なし）`;
-    quickHint.className = 'quick-add-hint';
-  } else {
-    quickHint.textContent = '時刻・日付を自動で読み取るよ';
-    quickHint.className = 'quick-add-hint';
-  }
+    quickHint.textContent = preview; quickHint.className = 'quick-add-hint preview';
+  } else if (parsed) { quickHint.textContent = `→「${parsed.text}」（期限なし）`; quickHint.className = 'quick-add-hint'; }
+  else { quickHint.textContent = '時刻・日付を自動で読み取るよ'; quickHint.className = 'quick-add-hint'; }
 });
-
 function quickAdd() {
   const val = quickInput.value.trim();
-  if (!val) {
-    quickInput.focus();
-    return;
-  }
+  if (!val) { quickInput.focus(); return; }
   const parsed = parseNaturalText(val);
-  if (!parsed) {
-    quickHint.textContent = '内容が空です';
-    quickHint.className = 'quick-add-hint error';
-    return;
-  }
+  if (!parsed) { quickHint.textContent = '内容が空です'; quickHint.className = 'quick-add-hint error'; return; }
   const todoText = parsed.time ? `${parsed.text}（${parsed.time}まで）` : parsed.text;
-  todos.push({
-    id: 't' + Date.now(),
-    text: todoText,
-    due: parsed.due,
-    time: parsed.time || null,
-    done: false,
-    createdAt: Date.now()
-  });
+  todos.push({ id: 't' + Date.now(), text: todoText, due: parsed.due, time: parsed.time || null, done: false, createdAt: Date.now() });
   quickInput.value = '';
-  quickHint.textContent = '時刻・日付を自動で読み取るよ';
-  quickHint.className = 'quick-add-hint';
-  saveTodos();
-  renderTodos();
+  quickHint.textContent = '時刻・日付を自動で読み取るよ'; quickHint.className = 'quick-add-hint';
+  saveTodos(); renderTodos();
 }
-
 document.getElementById('quickAddBtn').addEventListener('click', quickAdd);
-quickInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter') quickAdd();
-});
+quickInput.addEventListener('keydown', e => { if (e.key === 'Enter') quickAdd(); });
 
-// ===== JSONインポート =====
 function jsonImport() {
   const ta = document.getElementById('jsonInput');
   const result = document.getElementById('jsonResult');
   const raw = ta.value.trim();
-  if (!raw) {
-    result.textContent = '何か貼り付けてね';
-    result.className = 'json-result error';
-    return;
-  }
-
-  // ```json ... ``` のフェンスを除去
+  if (!raw) { result.textContent = '何か貼り付けてね'; result.className = 'json-result error'; return; }
   let cleaned = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-
   let parsed;
-  try {
-    parsed = JSON.parse(cleaned);
-  } catch (e) {
-    result.textContent = '❌ JSONを読めなかった: ' + e.message;
-    result.className = 'json-result error';
-    return;
-  }
-
-  // 単一オブジェクト or 配列に対応
+  try { parsed = JSON.parse(cleaned); } catch (e) { result.textContent = '❌ JSONを読めなかった: ' + e.message; result.className = 'json-result error'; return; }
   const items = Array.isArray(parsed) ? parsed : [parsed];
-  let added = 0;
-  let skipped = 0;
-
+  let added = 0, skipped = 0;
   items.forEach(item => {
-    if (!item || typeof item !== 'object' || !item.text) {
-      skipped++;
-      return;
-    }
+    if (!item || typeof item !== 'object' || !item.text) { skipped++; return; }
     const todoText = item.time ? `${item.text}（${item.time}まで）` : item.text;
-    todos.push({
-      id: 't' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-      text: todoText,
-      due: item.due || null,
-      time: item.time || null,
-      done: false,
-      createdAt: Date.now()
-    });
+    todos.push({ id: 't' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), text: todoText, due: item.due || null, time: item.time || null, done: false, createdAt: Date.now() });
     added++;
   });
-
   if (added > 0) {
     ta.value = '';
     result.textContent = `✨ ${added}件追加${skipped > 0 ? `（${skipped}件スキップ）` : ''}`;
     result.className = 'json-result success';
-    saveTodos();
-    renderTodos();
-  } else {
-    result.textContent = '❌ 有効なTODOがなかった（"text"フィールドが必要）';
-    result.className = 'json-result error';
-  }
+    saveTodos(); renderTodos();
+  } else { result.textContent = '❌ 有効なTODOがなかった'; result.className = 'json-result error'; }
 }
-
 document.getElementById('jsonImportBtn').addEventListener('click', jsonImport);
 
 function toggleTodo(id) {
   const t = todos.find(t => t.id === id);
   if (!t) return;
-  t.done = !t.done;
-  t.completedAt = t.done ? Date.now() : null;
-  saveTodos();
-  renderTodos();
+  t.done = !t.done; t.completedAt = t.done ? Date.now() : null;
+  saveTodos(); renderTodos();
 }
-
 function deleteTodo(id) {
   todos = todos.filter(t => t.id !== id);
-  saveTodos();
-  renderTodos();
+  saveTodos(); renderTodos();
 }
 
-// ===== イベント =====
 document.getElementById('todoAddBtn').addEventListener('click', addTodo);
-document.getElementById('todoInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addTodo();
-});
-
+document.getElementById('todoInput').addEventListener('keydown', e => { if (e.key === 'Enter') addTodo(); });
 document.querySelectorAll('.todo-filter').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.todo-filter').forEach(b => b.classList.remove('active'));
@@ -1119,17 +1798,131 @@ document.querySelectorAll('.todo-filter').forEach(btn => {
   });
 });
 
-// ===== 初期化 =====
-renderBrandDate();
-renderNews();
-renderTodos();
+// バックアップ
+const BACKUP_KEYS = ['fuukalog_todos_v1','mochimaru_wakeup_v2','fuukalog_diary_v1','fuukalog_pochi_v1','fuukalog_coupons_v1','fuukalog_coupon_cats_v1','fuukalog_brain_v1'];
+const KEY_LABELS = {
+  'fuukalog_todos_v1':'TODO', 'mochimaru_wakeup_v2':'起床ゲーム', 'fuukalog_diary_v1':'日記',
+  'fuukalog_pochi_v1':'ぽち（育成）', 'fuukalog_coupons_v1':'クーポン', 'fuukalog_coupon_cats_v1':'クーポンカテゴリ',
+  'fuukalog_brain_v1':'頭の中（brain dump）'
+};
+function showResult(text, type) {
+  const el = document.getElementById('dataResult');
+  el.textContent = text; el.className = 'data-result show ' + type;
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const backup = { app: 'KFK', version: 1, exportedAt: new Date().toISOString(), data: {} };
+  BACKUP_KEYS.forEach(k => { const v = localStorage.getItem(k); if (v !== null) backup.data[k] = v; });
+  if (Object.keys(backup.data).length === 0) { showResult('まだバックアップするデータがないよ', 'warn'); return; }
+  const json = JSON.stringify(backup, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const now = new Date();
+  const filename = `KFK-backup-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}.json`;
+  const a = document.createElement('a'); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showResult(`✨ ${filename} をダウンロードしたよ`, 'success');
+});
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+let pendingRestore = null;
+document.getElementById('importFile').addEventListener('change', (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  document.getElementById('importFilename').textContent = `📄 ${file.name}`;
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    try {
+      const parsed = JSON.parse(evt.target.result);
+      if (!parsed.data || typeof parsed.data !== 'object') throw new Error('正しいバックアップファイルではないよ');
+      pendingRestore = parsed; showRestoreModal(parsed);
+    } catch (err) { showResult(`❌ 読み込めなかった: ${err.message}`, 'error'); pendingRestore = null; }
+  };
+  reader.onerror = () => showResult('❌ ファイルを読めなかった', 'error');
+  reader.readAsText(file); e.target.value = '';
+});
+function showRestoreModal(parsed) {
+  const preview = document.getElementById('restorePreview');
+  let html = '';
+  if (parsed.exportedAt) {
+    const dt = new Date(parsed.exportedAt);
+    html += `<div class="head">📅 バックアップ日時</div><div class="item">${dt.getFullYear()}/${dt.getMonth()+1}/${dt.getDate()} ${String(dt.getHours()).padStart(2,'0')}:${String(dt.getMinutes()).padStart(2,'0')}</div>`;
+  }
+  html += `<div class="head" style="margin-top:8px;">📦 含まれるデータ</div>`;
+  BACKUP_KEYS.forEach(k => {
+    if (parsed.data[k]) {
+      const label = KEY_LABELS[k]; let detail = '';
+      try {
+        const d = JSON.parse(parsed.data[k]);
+        if (k === 'fuukalog_todos_v1' && Array.isArray(d)) detail = `${d.length}件`;
+        else if (k === 'mochimaru_wakeup_v2' && d) detail = `連続${d.streak || 0}日 / 最高${d.best || 0}日`;
+        else if (k === 'fuukalog_diary_v1' && d) detail = `${Object.keys(d).length}日分`;
+      } catch (e) {}
+      html += `<div class="item">・ ${label}${detail ? '（' + detail + '）' : ''}</div>`;
+    }
+  });
+  preview.innerHTML = html;
+  document.getElementById('restoreModal').classList.add('show');
+}
+function closeRestoreModal() {
+  document.getElementById('restoreModal').classList.remove('show');
+  document.getElementById('importFilename').textContent = '';
+  pendingRestore = null;
+}
+document.getElementById('cancelRestore').addEventListener('click', closeRestoreModal);
+document.getElementById('restoreModal').addEventListener('click', (e) => { if (e.target.id === 'restoreModal') closeRestoreModal(); });
 
-// 毎分ニュースと期限表示を更新（日付変わりに対応）
-setInterval(() => {
-  renderBrandDate();
-  renderNews();
-  renderTodos();
-}, 60000);
+document.getElementById('mergeBtn').addEventListener('click', () => {
+  if (!pendingRestore) return;
+  if (!confirm('🔀 マージ復元しますか？\n既存のデータにバックアップを足します。')) return;
+  let mergedCount = 0;
+  BACKUP_KEYS.forEach(k => {
+    const backupRaw = pendingRestore.data[k]; if (!backupRaw) return;
+    try {
+      const backup = JSON.parse(backupRaw);
+      const existingRaw = localStorage.getItem(k);
+      const existing = existingRaw ? JSON.parse(existingRaw) : null;
+      let merged;
+      if (k === 'fuukalog_todos_v1') {
+        const existingArr = Array.isArray(existing) ? existing : [];
+        const backupArr = Array.isArray(backup) ? backup : [];
+        const existingIds = new Set(existingArr.map(t => t.id));
+        const additions = backupArr.filter(t => !existingIds.has(t.id));
+        merged = [...existingArr, ...additions];
+      } else if (k === 'fuukalog_diary_v1') {
+        merged = { ...(existing || {}), ...backup };
+      } else if (k === 'mochimaru_wakeup_v2') {
+        const e = existing || {}; const b = backup || {};
+        const histMap = {};
+        (e.history || []).forEach(h => { histMap[h.date] = h; });
+        (b.history || []).forEach(h => { if (!histMap[h.date]) histMap[h.date] = h; });
+        merged = { ...e, ...b, shifts: b.shifts || e.shifts || [], calendar: { ...(e.calendar || {}), ...(b.calendar || {}) }, history: Object.values(histMap).sort((a, b) => b.date.localeCompare(a.date)), streak: Math.max(e.streak || 0, b.streak || 0), best: Math.max(e.best || 0, b.best || 0) };
+      } else { merged = backup; }
+      localStorage.setItem(k, JSON.stringify(merged));
+      mergedCount++;
+    } catch (err) { console.error('マージ失敗:', k, err); }
+  });
+  closeRestoreModal();
+  showResult(`✨ ${mergedCount}件のデータをマージしたよ`, 'success');
+  todos = loadTodos(); renderTodos(); renderNews();
+});
+
+document.getElementById('replaceBtn').addEventListener('click', () => {
+  if (!pendingRestore) return;
+  if (!confirm('🔄 全部置き換えますか？\n今のデータは全部消えて、バックアップの内容に上書きされます。')) return;
+  if (!confirm('⚠️ 最終確認：本当に全データを置き換えますか？\nこの操作は元に戻せません。')) return;
+  let replacedCount = 0;
+  BACKUP_KEYS.forEach(k => {
+    const backupRaw = pendingRestore.data[k];
+    if (backupRaw) { localStorage.setItem(k, backupRaw); replacedCount++; }
+    else { localStorage.removeItem(k); }
+  });
+  closeRestoreModal();
+  showResult(`✨ ${replacedCount}件のデータを置き換えたよ`, 'success');
+  todos = loadTodos(); renderTodos(); renderNews();
+});
+
+renderDates(); renderNews(); renderCouponAlert(); renderTodos(); renderBrain();
+setInterval(() => { renderDates(); renderNews(); renderCouponAlert(); renderTodos(); renderBrain(); }, 60000);
 </script>
 </body>
 </html>
