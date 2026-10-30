@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0回目 — セルフ式カフェを一度歩いてみる（試作）</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&display=swap');
+
+  :root {
+    --bg: #f6efe4;
+    --fog: #e7e1d8;
+    --ink: #3b3330;
+    --ink-soft: #85776f;
+    --floor: #fbf6ee;
+    --wood: #c99a6b;
+    --wood-dark: #a67a50;
+    --accent: #e98a5b;
+    --accent-soft: #fbe3d4;
+    --leaf: #8fb996;
+    --gold: #e8b64c;
+    --card: #fffdf9;
+    --line: #e5dbcf;
+    --shadow: 0 6px 20px rgba(59, 51, 48, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    min-height: 100vh;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .app {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 16px 16px 32px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .screen { display: none; flex-direction: column; gap: 12px; flex: 1; }
+  .screen.active { display: flex; }
+
+  /* ---------- 共通パーツ ---------- */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: transform 0.08s ease, opacity 0.2s;
+    width: 100%;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-main { background: var(--ink); color: #fff; }
+  .btn-sub { background: var(--card); color: var(--ink); border: 1.5px solid var(--line); }
+  .btn-choice {
+    background: var(--card);
+    color: var(--ink);
+    border: 1.5px solid var(--line);
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 500;
+  }
+  .btn-choice:hover { border-color: var(--accent); }
+
+  .card {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+  }
+
+  /* ---------- タイトル ---------- */
+  .title-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding: 20px 4px;
+  }
+  .title-num {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .title-num small { font-size: 28px; font-weight: 700; margin-left: 2px; }
+  .title-lead { font-size: 15px; line-height: 1.9; color: var(--ink-soft); }
+  .title-lead b { color: var(--ink); }
+  .title-cat { width: 120px; margin: 0 auto; }
+  .store-card { text-align: left; display: flex; flex-direction: column; gap: 6px; }
+  .store-name { font-size: 18px; font-weight: 700; }
+  .store-meta { font-size: 12px; color: var(--ink-soft); }
+  .note { font-size: 11px; color: var(--ink-soft); line-height: 1.7; text-align: center; }
+
+  /* ---------- プレイ画面 ---------- */
+  .topbar { display: flex; align-items: center; justify-content: space-between; }
+  .topbar-name { font-size: 13px; font-weight: 700; }
+  .dots { display: flex; gap: 5px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background 0.3s; }
+  .dot.done { background: var(--accent); }
+  .dot.now { background: var(--ink); }
+
+  .map-card { padding: 8px; border-radius: 22px; background: var(--card); box-shadow: var(--shadow); }
+  #map { width: 100%; height: auto; display: block; touch-action: manipulation; }
+
+  .target { cursor: pointer; }
+  .target .ring {
+    fill: var(--accent);
+    opacity: 0.25;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .target .core { fill: var(--accent); }
+  @keyframes pulse {
+    0%, 100% { transform: scale(0.8); opacity: 0.35; }
+    50% { transform: scale(1.35); opacity: 0.1; }
+  }
+
+  #cat {
+    transition: transform 1s cubic-bezier(.45,.05,.35,1);
+  }
+  #cat.walking .cat-body { animation: bob 0.25s ease-in-out infinite alternate; }
+  @keyframes bob { from { transform: translateY(0); } to { transform: translateY(-2.5px); } }
+
+  .label-text { font-family: 'Zen Maru Gothic', sans-serif; font-size: 10px; font-weight: 700; fill: var(--ink-soft); }
+
+  .sheet {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 168px;
+  }
+  .say { display: flex; gap: 10px; align-items: flex-start; }
+  .say-icon { width: 36px; height: 36px; flex-shrink: 0; }
+  .say-body { font-size: 15px; line-height: 1.75; }
+  .say-who { font-size: 11px; font-weight: 700; color: var(--ink-soft); margin-bottom: 2px; }
+  .npc {
+    background: #f3ede5;
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .npc-who { font-size: 11px; color: var(--ink-soft); font-weight: 700; margin-bottom: 2px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .hint { font-size: 12px; color: var(--accent); font-weight: 700; }
+
+  .fade-in { animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- クリア・報告 ---------- */
+  .center { text-align: center; }
+  .big-key { width: 110px; margin: 8px auto 0; }
+  .big-key.gold .key-fill { fill: var(--gold); }
+  .clear-title { font-size: 26px; font-weight: 900; }
+  .clear-text { font-size: 14px; line-height: 1.9; color: var(--ink-soft); }
+  .q { font-size: 16px; font-weight: 700; line-height: 1.7; }
+  textarea {
+    font-family: inherit;
+    font-size: 15px;
+    width: 100%;
+    min-height: 88px;
+    border-radius: 14px;
+    border: 1.5px solid var(--line);
+    padding: 12px;
+    resize: vertical;
+    background: #fff;
+    color: var(--ink);
+  }
+  textarea:focus { outline: none; border-color: var(--accent); }
+  .btn-choice.selected { border-color: var(--accent); background: var(--accent-soft); font-weight: 700; }
+  .result-box {
+    background: #f3ede5;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    text-align: left;
+  }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .copied { font-size: 12px; color: var(--leaf); font-weight: 700; text-align: center; min-height: 18px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== タイトル ===== -->
+  <section class="screen active" id="s-title">
+    <div class="title-wrap">
+      <span class="tag" style="align-self:center">試作</span>
+      <div class="title-num">0<small>回目</small></div>
+      <svg class="title-cat" viewBox="-30 -30 60 60" aria-hidden="true"><use href="#cat-shape"/></svg>
+      <p class="title-lead">
+        初めてのお店に行く前に、<br>
+        旅猫と<b>一度だけ歩いておく</b>。<br>
+        そうすると本番は、<b>2回目</b>になる。
+      </p>
+      <div class="card store-card">
+        <span class="tag" style="align-self:flex-start">今日のステージ</span>
+        <div class="store-name" id="store-name"></div>
+        <div class="store-meta" id="store-meta"></div>
+      </div>
+      <button class="btn btn-main" id="btn-start">歩いてみる</button>
+      <p class="note">お店の配置やセリフは、試作用の例です。</p>
+    </div>
+  </section>
+
+  <!-- ===== プレイ ===== -->
+  <section class="screen" id="s-play">
+    <div class="topbar">
+      <div class="topbar-name" id="play-name"></div>
+      <div class="dots" id="dots"></div>
+    </div>
+
+    <div class="map-card">
+      <svg id="map" viewBox="0 0 360 440" role="img" aria-label="お店の見取り図">
+        <defs>
+          <!-- 旅猫（オリジナル） -->
+          <g id="cat-shape">
+            <path d="M10 6 C 22 4, 24 -10, 16 -14" fill="none" stroke="#9a8f86" stroke-width="4" stroke-linecap="round"/>
+            <ellipse cx="0" cy="6" rx="13" ry="11" fill="#d8cfc6"/>
+            <ellipse cx="0" cy="9" rx="7" ry="6" fill="#f4efe9"/>
+            <path d="M-11 -10 L-13 -24 L-3 -15 Z" fill="#d8cfc6"/>
+            <path d="M11 -10 L13 -24 L3 -15 Z" fill="#d8cfc6"/>
+            <path d="M-10 -13 L-11 -20 L-5 -15 Z" fill="#f1b9a6"/>
+            <path d="M10 -13 L11 -20 L5 -15 Z" fill="#f1b9a6"/>
+            <circle cx="0" cy="-8" r="12.5" fill="#d8cfc6"/>
+            <path d="M-4 -19 Q 0 -15 4 -19" fill="none" stroke="#9a8f86" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="-4.5" cy="-8" r="1.7" fill="#3b3330"/>
+            <circle cx="4.5" cy="-8" r="1.7" fill="#3b3330"/>
+            <path d="M-1.5 -4 L1.5 -4 L0 -2.4 Z" fill="#e48f80"/>
+            <path d="M-8 -3.5 L-15 -5 M-8 -2 L-15 -1" stroke="#9a8f86" stroke-width="0.8" stroke-linecap="round"/>
+            <path d="M8 -3.5 L15 -5 M8 -2 L15 -1" stroke="#9a8f86" stroke-width="0.8" stroke-linecap="round"/>
+            <!-- 旅の小さなかばん -->
+            <path d="M-12 1 Q 0 9 12 1" fill="none" stroke="#a67a50" stroke-width="2"/>
+            <rect x="7" y="2" width="8" height="7" rx="2" fill="#e98a5b"/>
+          </g>
+        </defs>
+
+        <!-- 外 -->
+        <rect x="0" y="0" width="360" height="440" fill="#efe7db"/>
+        <!-- 床 -->
+        <rect x="18" y="18" width="324" height="362" rx="14" fill="var(--floor)" stroke="#d9cdbf" stroke-width="3"/>
+
+        <!-- メニューボード（レジの上） -->
+        <rect x="214" y="22" width="112" height="14" rx="4" fill="#4a403b"/>
+        <text x="270" y="32.5" text-anchor="middle" font-size="8" fill="#fff" font-family="Zen Maru Gothic" font-weight="700">MENU</text>
+
+        <!-- レジカウンター -->
+        <rect x="210" y="42" width="120" height="34" rx="8" fill="var(--wood)"/>
+        <rect x="240" y="48" width="24" height="16" rx="3" fill="#5a504a"/>
+        <text class="label-text" x="300" y="63" text-anchor="middle" fill="#fff" style="fill:#fff">レジ</text>
+
+        <!-- 受け取りカウンター -->
+        <rect x="304" y="196" width="28" height="92" rx="8" fill="var(--wood)"/>
+        <text class="label-text" x="318" y="226" text-anchor="middle" style="fill:#fff">受</text><text class="label-text" x="318" y="239" text-anchor="middle" style="fill:#fff">け</text><text class="label-text" x="318" y="252" text-anchor="middle" style="fill:#fff">取</text><text class="label-text" x="318" y="265" text-anchor="middle" style="fill:#fff">り</text>
+
+        <!-- 列の目印 -->
+        <line x1="270" y1="120" x2="270" y2="176" stroke="#d9cdbf" stroke-width="2" stroke-dasharray="3 4"/>
+
+        <!-- 席 -->
+        <g fill="var(--wood-dark)">
+          <circle cx="78" cy="88" r="20"/>
+          <circle cx="78" cy="176" r="20"/>
+          <circle cx="150" cy="232" r="20"/>
+          <rect x="34" y="250" width="60" height="30" rx="8"/>
+        </g>
+        <g fill="#e5d6c4">
+          <circle cx="50" cy="88" r="8"/><circle cx="106" cy="88" r="8"/>
+          <circle cx="50" cy="176" r="8"/><circle cx="106" cy="176" r="8"/>
+          <circle cx="122" cy="232" r="8"/><circle cx="178" cy="232" r="8"/>
+          <circle cx="50" cy="292" r="8"/><circle cx="78" cy="292" r="8"/>
+        </g>
+        <!-- 観葉植物 -->
+        <circle cx="38" cy="38" r="12" fill="var(--leaf)"/>
+        <circle cx="322" cy="360" r="11" fill="var(--leaf)"/>
+
+        <!-- 返却口 -->
+        <rect x="30" y="332" width="64" height="28" rx="6" fill="#bfb2a5"/>
+        <text class="label-text" x="62" y="350" text-anchor="middle" style="fill:#fff">返却口</text>
+
+        <!-- ドア -->
+        <rect x="150" y="372" width="60" height="16" rx="4" fill="#b9d3dc" stroke="#8fb1bd" stroke-width="2"/>
+        <text class="label-text" x="180" y="404" text-anchor="middle">入口</text>
+
+        <!-- 歩いた跡 -->
+        <polyline id="trail" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="1 7" stroke-linecap="round" opacity="0.7" points=""/>
+
+        <!-- 次に進む場所 -->
+        <g id="target" class="target" style="display:none">
+          <circle class="ring" r="20"/>
+          <circle class="core" r="7"/>
+        </g>
+
+        <!-- 旅猫 -->
+        <g id="cat"><g class="cat-body"><use href="#cat-shape" transform="scale(0.9)"/></g></g>
+      </svg>
+    </div>
+
+    <div class="sheet" id="sheet"></div>
+  </section>
+
+  <!-- ===== クリア ===== -->
+  <section class="screen" id="s-clear">
+    <div class="title-wrap center">
+      <span class="tag" style="align-self:center">0回目 クリア</span>
+      <svg class="big-key" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="key-fill" cx="32" cy="50" r="20" fill="#cfc4b8"/>
+        <circle cx="32" cy="50" r="8" fill="var(--bg)"/>
+        <rect class="key-fill" x="48" y="45" width="42" height="10" rx="3" fill="#cfc4b8"/>
+        <rect class="key-fill" x="72" y="55" width="7" height="12" rx="2" fill="#cfc4b8"/>
+        <rect class="key-fill" x="83" y="55" width="7" height="8" rx="2" fill="#cfc4b8"/>
+      </svg>
+      <div class="clear-title">下見の鍵を手に入れた</div>
+      <p class="clear-text">
+        これで、このお店は一度歩いたことのある場所。<br>
+        本番に行って「行ってきた」を押すと、<br>
+        この鍵が<b style="color:var(--ink)">合鍵</b>になる。
+      </p>
+      <div class="stack">
+        <button class="btn btn-main" id="btn-went">本番に行ってきた</button>
+        <button class="btn btn-sub" id="btn-again">もう一回歩く</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 行ってきた報告 ===== -->
+  <section class="screen" id="s-report">
+    <div class="card stack">
+      <span class="tag" style="align-self:flex-start">おかえり</span>
+      <p class="q">入った瞬間、<br>2回目みたいな感じだった？</p>
+      <div class="choices" id="feel-choices"></div>
+    </div>
+    <div class="card stack">
+      <p class="q">そのとき心の中で思ってたこと、<br>ひとことだけ教えて。</p>
+      <textarea id="voice" placeholder="例：入った瞬間、全員こっち見た気がした"></textarea>
+      <p class="note" style="text-align:left">あとで、旅猫と一緒の4コマになる予定です。</p>
+    </div>
+    <button class="btn btn-main" id="btn-submit" disabled style="opacity:.4">合鍵にする</button>
+  </section>
+
+  <!-- ===== 合鍵 ===== -->
+  <section class="screen" id="s-key">
+    <div class="title-wrap center">
+      <span class="tag" style="align-self:center">合鍵</span>
+      <svg class="big-key gold" viewBox="0 0 100 100" aria-hidden="true">
+        <circle class="key-fill" cx="32" cy="50" r="20"/>
+        <circle cx="32" cy="50" r="8" fill="var(--bg)"/>
+        <rect class="key-fill" x="48" y="45" width="42" height="10" rx="3"/>
+        <rect class="key-fill" x="72" y="55" width="7" height="12" rx="2"/>
+        <rect class="key-fill" x="83" y="55" width="7" height="8" rx="2"/>
+      </svg>
+      <div class="clear-title" id="key-title"></div>
+      <p class="clear-text">このお店のまわりの霧が、少し晴れた。</p>
+      <div class="card stack">
+        <p class="note" style="text-align:left">試作のテスト中です。下の内容をコピーして、紙芝居を作った人に送ってください。</p>
+        <div class="result-box" id="result-box"></div>
+        <button class="btn btn-sub" id="btn-copy">コピーする</button>
+        <div class="copied" id="copied"></div>
+      </div>
+      <button class="btn btn-sub" id="btn-home">最初にもどる</button>
+    </div>
+  </section>
+</div>
+
+<script>
+/* =========================================================
+   ステージのデータ
+   「流れの型」＝先に注文・支払い型
+   お店ごとの差分は、この STORE の中身だけを変える想定
+   ========================================================= */
+const STORE = {
+  name: 'セルフ式カフェ（例）',
+  meta: '流れの型：先に注文・支払い型 ／ レジは入って右奥',
+  start: [180, 418],
+  steps: [
+    {
+      at: [180, 362],
+      before: 'お店の前に着いた。ガラス越しに中が見えるね。<br>光っているドアをタップして、入ってみよう。',
+      after: 'ドアが開いて、「いらっしゃいませ」が聞こえる。<br>返事はしなくて大丈夫。軽く会釈するくらいで。'
+    },
+    {
+      at: [270, 176],
+      before: '入ったら、まず<b>右奥のレジ</b>へ。<br>席を探すのは、あとで大丈夫。',
+      after: '列のいちばん後ろに並ぶ。<br>メニューはレジの上にあるから、並びながら決めればいい。'
+    },
+    {
+      at: [270, 104],
+      before: '順番が来た。レジの前へ進もう。',
+      talk: [
+        { npc: '店内でお召し上がりですか？', options: ['はい', '持ち帰りで'], cat: 'どっちを選んでも正解。' },
+        { npc: 'ご注文はお決まりですか？', options: ['カフェラテください', 'おすすめはどれですか？'], cat: '「おすすめどれですか」は、みんなよく聞いてるよ。' },
+        { npc: 'サイズはいかがなさいますか？', options: ['S', 'M', 'L'], cat: '迷ったら、真ん中で大丈夫。' },
+        { npc: 'ポイントカードはお持ちですか？', options: ['ないです'], cat: '「ないです」で終わり。' },
+        { npc: 'お会計、580円です。', options: ['払う'], cat: 'これで注文はおしまい。' }
+      ]
+    },
+    {
+      at: [282, 242],
+      before: 'お会計がすんだら、右側の<b>受け取りカウンター</b>へ。',
+      after: '名前か番号で呼ばれるまで、ここで待つ。<br>呼ばれたら「ありがとうございます」で受け取る。'
+    },
+    {
+      at: [150, 196],
+      before: '飲み物を持って、空いている好きな席へ。',
+      after: 'ふう。座れたら、もう半分クリア。<br>ゆっくりしていこう。'
+    },
+    {
+      at: [62, 316],
+      before: '帰るときは、入口の近くにある<b>返却口</b>へ。',
+      after: 'カップを置くだけ。<br>分ける場所があれば、表示どおりに。'
+    },
+    {
+      at: [180, 418],
+      before: 'ドアから外へ。',
+      after: null
+    }
+  ]
+};
+
+/* ========================================================= */
+const $ = (id) => document.getElementById(id);
+const screens = ['s-title', 's-play', 's-clear', 's-report', 's-key'];
+function show(id) {
+  screens.forEach(s => $(s).classList.toggle('active', s === id));
+  window.scrollTo(0, 0);
+}
+
+const CAT_ICON = '<svg class="say-icon" viewBox="-30 -30 60 60" aria-hidden="true"><use href="#cat-shape"/></svg>';
+
+let stepIndex = 0;
+let trail = [];
+let feel = null;
+let moving = false;
+
+function setCat([x, y], instant) {
+  const cat = $('cat');
+  if (instant) {
+    cat.style.transition = 'none';
+    cat.style.transform = `translate(${x}px, ${y}px)`;
+    cat.getBoundingClientRect();
+    cat.style.transition = '';
+  } else {
+    cat.style.transform = `translate(${x}px, ${y}px)`;
+  }
+}
+
+function drawTrail() {
+  $('trail').setAttribute('points', trail.map(p => p.join(',')).join(' '));
+}
+
+function drawDots() {
+  $('dots').innerHTML = STORE.steps.map((_, i) =>
+    `<span class="dot ${i < stepIndex ? 'done' : i === stepIndex ? 'now' : ''}"></span>`
+  ).join('');
+}
+
+function catSay(html, extra = '') {
+  $('sheet').innerHTML = `
+    <div class="say fade-in">
+      ${CAT_ICON}
+      <div><div class="say-who">旅猫</div><div class="say-body">${html}</div></div>
+    </div>${extra}`;
+}
+
+function startGame() {
+  stepIndex = 0;
+  trail = [STORE.start.slice()];
+  drawTrail();
+  setCat(STORE.start, true);
+  show('s-play');
+  showStep();
+}
+
+function showStep() {
+  drawDots();
+  const step = STORE.steps[stepIndex];
+  const t = $('target');
+  t.setAttribute('transform', `translate(${step.at[0]}, ${step.at[1]})`);
+  t.style.display = '';
+  catSay(step.before, `<div class="hint fade-in">光っているところをタップ</div>`);
+}
+
+function moveTo() {
+  if (moving) return;
+  const step = STORE.steps[stepIndex];
+  if (!step) return;
+  moving = true;
+  $('target').style.display = 'none';
+  const cat = $('cat');
+  cat.classList.add('walking');
+  setCat(step.at);
+  trail.push(step.at.slice());
+  drawTrail();
+  setTimeout(() => {
+    cat.classList.remove('walking');
+    moving = false;
+    arrive(step);
+  }, 1000);
+}
+
+function arrive(step) {
+  if (step.talk) return runTalk(step.talk, 0);
+  if (step.after === null) return finish();
+  catSay(step.after, `<button class="btn btn-main fade-in" id="btn-next">つぎへ</button>`);
+  $('btn-next').onclick = next;
+}
+
+function runTalk(talk, i) {
+  if (i >= talk.length) {
+    catSay('ちゃんと注文できたね。', `<button class="btn btn-main fade-in" id="btn-next">つぎへ</button>`);
+    $('btn-next').onclick = next;
+    return;
+  }
+  const line = talk[i];
+  $('sheet').innerHTML = `
+    <div class="npc fade-in"><div class="npc-who">店員さん</div>${line.npc}</div>
+    <div class="choices fade-in">
+      ${line.options.map((o, k) => `<button class="btn btn-choice" data-k="${k}">「${o}」</button>`).join('')}
+    </div>`;
+  $('sheet').querySelectorAll('.btn-choice').forEach(b => {
+    b.onclick = () => {
+      catSay(line.cat, `<button class="btn btn-main fade-in" id="btn-next">つぎへ</button>`);
+      $('btn-next').onclick = () => runTalk(talk, i + 1);
+    };
+  });
+}
+
+function next() {
+  stepIndex++;
+  if (stepIndex >= STORE.steps.length) return finish();
+  showStep();
+}
+
+function finish() {
+  drawDots();
+  setTimeout(() => show('s-clear'), 300);
+}
+
+/* ---------- 行ってきた報告 ---------- */
+const FEELS = ['うん、2回目みたいだった', 'ちょっとだけ、そうだった', 'ううん、ぜんぜん初めてだった'];
+function openReport() {
+  feel = null;
+  $('voice').value = '';
+  $('feel-choices').innerHTML = FEELS.map((f, i) =>
+    `<button class="btn btn-choice" data-i="${i}">${f}</button>`).join('');
+  $('feel-choices').querySelectorAll('.btn-choice').forEach(b => {
+    b.onclick = () => {
+      feel = FEELS[+b.dataset.i];
+      $('feel-choices').querySelectorAll('.btn-choice').forEach(x => x.classList.toggle('selected', x === b));
+      $('btn-submit').disabled = false;
+      $('btn-submit').style.opacity = 1;
+    };
+  });
+  $('btn-submit').disabled = true;
+  $('btn-submit').style.opacity = .4;
+  show('s-report');
+}
+
+function submitReport() {
+  if (!feel) return;
+  const voice = $('voice').value.trim();
+  const text = `【0回目テスト】\nお店：${STORE.name}\n2回目みたいだった？：${feel}\n心の声：${voice || '（なし）'}`;
+  $('key-title').textContent = `${STORE.name}の合鍵`;
+  $('result-box').textContent = text;
+  $('copied').textContent = '';
+  try {
+    const log = JSON.parse(localStorage.getItem('zero-kaime-log') || '[]');
+    log.push({ at: new Date().toISOString(), store: STORE.name, feel, voice });
+    localStorage.setItem('zero-kaime-log', JSON.stringify(log));
+  } catch (e) { /* 保存できない環境でもそのまま進む */ }
+  show('s-key');
+}
+
+async function copyResult() {
+  try {
+    await navigator.clipboard.writeText($('result-box').textContent);
+    $('copied').textContent = 'コピーしました';
+  } catch (e) {
+    $('copied').textContent = 'コピーできなかったので、長押しで選んでコピーしてください';
+  }
+}
+
+/* ---------- 起動 ---------- */
+$('store-name').textContent = STORE.name;
+$('store-meta').textContent = STORE.meta;
+$('play-name').textContent = STORE.name;
+$('btn-start').onclick = startGame;
+$('target').addEventListener('click', moveTo);
+$('btn-again').onclick = startGame;
+$('btn-went').onclick = openReport;
+$('btn-submit').onclick = submitReport;
+$('btn-copy').onclick = copyResult;
+$('btn-home').onclick = () => show('s-title');
+</script>
+</body>
+</html>
